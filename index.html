@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>모닝 미션 조립소</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121932; --panel2:#1a2344; --line:#2a3768; --text:#f4f7ff;
+  --sub:#9fb0e2; --accent:#63e3ff; --accent2:#8fff9f; --gold:#ffd76a; --danger:#ff8a8a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,Apple SD Gothic Neo,Noto Sans KR,sans-serif;background:radial-gradient(circle at top,#182449 0,#0b1020 48%,#070b16 100%);color:var(--text)}
+body{overflow:hidden}
+button{font:inherit}
+.app{max-width:480px;height:100dvh;margin:0 auto;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+.header{padding:18px 16px 12px;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0))}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.title{font-weight:900;font-size:22px;letter-spacing:-.03em}
+.clock{font-weight:800;color:var(--accent);font-size:18px}
+.subtitle{margin-top:6px;color:var(--sub);font-size:12px}
+.progressbar{margin-top:12px;height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.progressfill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--gold));transition:width .35s ease}
+.stats{margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:10px 12px;border-radius:14px}
+.stat .k{font-size:11px;color:var(--sub)}
+.stat .v{font-size:18px;font-weight:900;margin-top:2px}
+.main{min-height:0;overflow:auto;padding:12px 14px 16px;display:grid;gap:12px;align-content:start}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 12px 24px rgba(0,0,0,.18)}
+.forge{padding:14px;position:relative;overflow:hidden}
+.forge::before{content:'';position:absolute;inset:-30% auto auto -15%;width:140px;height:140px;background:radial-gradient(circle,rgba(99,227,255,.22),rgba(99,227,255,0));pointer-events:none}
+.forge-header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{padding:6px 10px;border-radius:999px;background:rgba(99,227,255,.1);color:var(--accent);font-size:11px;font-weight:800;border:1px solid rgba(99,227,255,.24)}
+.forge-name{font-size:16px;font-weight:900}
+.forge-sub{color:var(--sub);font-size:12px;margin-top:4px}
+.stage{margin-top:12px;position:relative;height:280px;border-radius:18px;background:linear-gradient(180deg,#0b1430,#101933);border:1px solid rgba(255,255,255,.06);overflow:hidden}
+.stage-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,1))}
+.brick-zone{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.figure-wrap{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);width:170px;height:220px;display:flex;align-items:end;justify-content:center}
+.figure-wrap svg{width:170px;height:220px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.35))}
+.silhouette{opacity:.18}
+.part{opacity:0;transform:translateY(10px) scale(.98);transform-origin:center;transition:opacity .35s ease,transform .35s ease}
+.part.on{opacity:1;transform:translateY(0) scale(1)}
+.pedestal{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);width:190px;height:18px;border-radius:999px;background:radial-gradient(circle,rgba(99,227,255,.5),rgba(99,227,255,.03) 65%,transparent 70%)}
+.parts-row{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.part-chip{padding:8px 0;border-radius:12px;text-align:center;font-size:11px;font-weight:800;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--sub)}
+.part-chip.on{color:#08111f;background:linear-gradient(180deg,var(--gold),#ffbe55);border-color:transparent}
+.tasks{padding:12px}
+.tasks-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tasks-title{font-size:16px;font-weight:900}
+.tasks-sub{font-size:12px;color:var(--sub)}
+.task-list{display:grid;gap:10px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:transform .12s ease,border-color .2s ease,opacity .2s ease}
+.task:active{transform:scale(.985)}
+.task.locked{opacity:.42;cursor:default}
+.task.done{background:rgba(143,255,159,.12);border-color:rgba(143,255,159,.35)}
+.icon{width:44px;height:44px;border-radius:14px;background:linear-gradient(180deg,#26345f,#1b2649);display:flex;align-items:center;justify-content:center;font-size:23px}
+.t1{font-weight:800;font-size:16px}.t2{font-size:12px;color:var(--sub);margin-top:3px}
+.check{width:34px;height:34px;border-radius:999px;border:2px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-weight:900;color:transparent;background:rgba(255,255,255,.03)}
+.task.done .check{background:linear-gradient(180deg,var(--accent2),#4ce670);color:#07110c;border-color:transparent}
+.hint{margin-top:10px;color:var(--sub);font-size:12px;text-align:center}
+.controls{padding:0 12px 12px;display:flex;gap:8px;flex-wrap:wrap}
+.ghostbtn,.primarybtn,.secondarybtn{border:none;border-radius:14px;padding:12px 14px;font-weight:900;cursor:pointer}
+.primarybtn{background:linear-gradient(180deg,var(--accent),#3fc2ff);color:#05111b;flex:1}
+.secondarybtn{background:linear-gradient(180deg,var(--gold),#ffbd55);color:#201302;flex:1}
+.ghostbtn{background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(255,255,255,.08)}
+.gallery{padding:12px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.gallery-item{aspect-ratio:1/1.2;background:#09101f;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;position:relative}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-empty{font-size:12px;color:var(--sub);padding:10px 0 4px}
+.footer{padding:10px 14px 18px;color:var(--sub);font-size:11px;text-align:center}
+.overlay,.camera,.photo-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;z-index:30}
+.overlay.show,.camera.show,.photo-modal.show{display:flex}
+.overlay{background:rgba(4,8,17,.35);pointer-events:none}
+.toast{background:rgba(8,14,28,.92);border:1px solid rgba(255,255,255,.12);padding:16px 18px;border-radius:18px;min-width:220px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.35);transform:translateY(8px) scale(.96);opacity:0;transition:.22s ease}
+.overlay.show .toast{transform:translateY(0) scale(1);opacity:1}
+.toast .e{font-size:40px}.toast .a{font-weight:900;font-size:18px;margin-top:6px}.toast .b{font-size:13px;color:var(--sub);margin-top:3px}
+.camera,.photo-modal{background:rgba(0,0,0,.84);z-index:40}
+.camera-box,.photo-box{width:min(420px,100%);background:#0b1327;border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:14px}
+.camera video,.photo-box img{width:100%;border-radius:16px;background:#000;max-height:60vh;object-fit:cover}
+.cam-actions,.photo-actions{display:flex;gap:8px;margin-top:12px}
+.file-fallback{margin-top:10px;display:block;width:100%;text-align:center;padding:12px 14px;border-radius:14px;border:1px dashed rgba(255,255,255,.18);color:var(--sub)}
+.hidden{display:none!important}
+.spark{position:absolute;width:24px;height:16px;border-radius:4px;box-shadow:0 5px 12px rgba(0,0,0,.18);will-change:transform,opacity}
+.complete-banner{margin-top:10px;padding:12px;border-radius:16px;background:linear-gradient(180deg,rgba(255,215,106,.18),rgba(255,190,70,.08));border:1px solid rgba(255,215,106,.24);text-align:center}
+.complete-banner .big{font-size:18px;font-weight:900}
+.complete-banner .small{font-size:12px;color:#ffe6ad;margin-top:4px}
+@media (max-width:370px){.stats{grid-template-columns:1fr 1fr}.stage{height:250px}.figure-wrap{width:150px;height:200px}.figure-wrap svg{width:150px;height:200px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="toprow"><div class="title">🌞 모닝 미션 조립소</div><div class="clock" id="clock">--:--</div></div>
+    <div class="subtitle" id="subtitle">미션을 깨면 랜덤 레고 블럭을 획득하고, 모두 완료하면 오늘의 완성품이 만들어져요.</div>
+    <div class="progressbar"><div class="progressfill" id="progressFill"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="k">오늘 진행</div><div class="v" id="progressText">0 / 0</div></div>
+      <div class="stat"><div class="k">획득 블럭</div><div class="v" id="brickCount">0</div></div>
+      <div class="stat"><div class="k">사진 보관</div><div class="v" id="photoCount">0</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <section class="card forge">
+      <div class="forge-header">
+        <div>
+          <div class="forge-name" id="modelName">오늘의 완성품</div>
+          <div class="forge-sub" id="modelSub">미션 완료 때마다 블럭이 중앙 조립소로 날아갑니다.</div>
+        </div>
+        <div class="badge" id="dayBadge">DAY</div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="stage-grid"></div>
+        <div class="brick-zone" id="brickZone"></div>
+        <div class="figure-wrap">
+          <svg viewBox="0 0 180 230" aria-label="figure preview">
+            <g class="silhouette" id="silhouette"></g>
+            <g id="partsLayer"></g>
+          </svg>
+        </div>
+        <div class="pedestal"></div>
+      </div>
+      <div class="parts-row" id="partsRow"></div>
+      <div class="complete-banner hidden" id="completeBanner">
+        <div class="big">🎉 완성!</div>
+        <div class="small">오늘의 조립품이 모두 완성됐어요.</div>
+      </div>
+    </section>
+
+    <section class="card tasks">
+      <div class="tasks-top">
+        <div class="tasks-title">오늘의 체크리스트</div>
+        <div class="tasks-sub" id="pageText">처음 3개부터 시작</div>
+      </div>
+      <div class="task-list" id="taskList"></div>
+      <div class="hint" id="hint">첫 3개를 완료하면 다음 체크리스트가 자동으로 열립니다.</div>
+    </section>
+
+    <div class="controls">
+      <button class="ghostbtn" id="speakBtn">🔊 영어 안내 듣기</button>
+      <button class="secondarybtn" id="cameraBtn">📷 인증샷</button>
+      <button class="primarybtn" id="resetBtn">↺ 오늘 미션 다시 시작</button>
+    </div>
+
+    <section class="card gallery">
+      <div class="tasks-top"><div class="tasks-title">사진 보관함</div><div class="tasks-sub">최근 12장</div></div>
+      <div class="gallery-empty" id="galleryEmpty">아직 저장된 사진이 없어요.</div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+  </div>
+  <div class="footer">GitHub / Vercel 업로드용 단일 정적 앱</div>
+</div>
+
+<div class="overlay" id="overlay"><div class="toast"><div class="e" id="toastEmoji">🧱</div><div class="a" id="toastTitle">블럭 획득!</div><div class="b" id="toastBody">조립소로 이동합니다.</div></div></div>
+
+<div class="camera" id="cameraModal">
+  <div class="camera-box">
+    <video id="cameraVideo" autoplay playsinline></video>
+    <div class="cam-actions">
+      <button class="ghostbtn" id="closeCamBtn">닫기</button>
+      <button class="primarybtn" id="shotBtn">촬영</button>
+    </div>
+    <label class="file-fallback">카메라가 안 되면 사진 업로드<input class="hidden" type="file" accept="image/*" capture="user" id="fileInput"></label>
+  </div>
+</div>
+
+<div class="photo-modal" id="photoModal">
+  <div class="photo-box">
+    <img id="photoPreview" alt="captured photo">
+    <div class="photo-actions">
+      <button class="ghostbtn" id="closePhotoBtn">닫기</button>
+      <button class="secondarybtn" id="savePhotoBtn">기기에 저장</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="photoCanvas" class="hidden"></canvas>
+
+<script>
+const DEFAULT_TASKS = [
+  { id: 1, name: '옷 입기', emoji: '🥋', en: 'Get dressed' },
+  { id: 2, name: '세수하기', emoji: '💦', en: 'Wash your face' },
+  { id: 3, name: '양치하기', emoji: '🪥', en: 'Brush your teeth' },
+  { id: 4, name: '아침밥 먹기', emoji: '🍚', en: 'Eat breakfast' },
+  { id: 5, name: '책 읽기', emoji: '📚', en: 'Read a book' },
+  { id: 6, name: '준비물 챙기기', emoji: '🎒', en: 'Pack your bag' },
+];
+const PART_NAMES = ['머리','몸통','왼팔','오른팔','다리'];
+const BRICK_COLORS = ['#ff5d73','#5de4ff','#ffd05d','#7cff8d','#b88cff','#ff955d'];
+const BRICK_SHAPES = ['2x2','2x3','1x4','1x2'];
+const MODELS = [
+  { key:'ninja', name:'닌자 전사', colorA:'#1b1b1d', colorB:'#2d3547', accent:'#f2c94c' },
+  { key:'astronaut', name:'우주 탐험가', colorA:'#f3f5fa', colorB:'#cfd7e9', accent:'#5ac8ff' },
+  { key:'firefighter', name:'소방 구조대', colorA:'#ff4d4f', colorB:'#d62f31', accent:'#ffd166' },
+  { key:'doctor', name:'연구실 닥터', colorA:'#ffffff', colorB:'#dfe7f3', accent:'#6b8cff' },
+  { key:'explorer', name:'정글 탐험가', colorA:'#c9a86a', colorB:'#9f7f49', accent:'#4cd97b' },
+  { key:'racer', name:'스피드 레이서', colorA:'#f8f8f8', colorB:'#d6d6d6', accent:'#ff4d4f' }
+];
+
+const state = {
+  tasks: loadJSON('advancedTasks', DEFAULT_TASKS),
+  done: loadJSON('advancedDone', {}),
+  photos: loadJSON('advancedPhotos', []),
+  bricks: loadJSON('advancedBricks', []),
+  today: getTodayKey(),
+  dailyModelKey: null,
+  stream: null,
+};
+
+ensureTodayState();
+cacheModel();
+
+const el = {
+  clock: gid('clock'), subtitle: gid('subtitle'), progressFill: gid('progressFill'), progressText: gid('progressText'), brickCount: gid('brickCount'), photoCount: gid('photoCount'),
+  modelName: gid('modelName'), modelSub: gid('modelSub'), dayBadge: gid('dayBadge'), taskList: gid('taskList'), pageText: gid('pageText'), hint: gid('hint'),
+  silhouette: gid('silhouette'), partsLayer: gid('partsLayer'), partsRow: gid('partsRow'), completeBanner: gid('completeBanner'),
+  overlay: gid('overlay'), toastEmoji: gid('toastEmoji'), toastTitle: gid('toastTitle'), toastBody: gid('toastBody'),
+  cameraModal: gid('cameraModal'), cameraVideo: gid('cameraVideo'), shotBtn: gid('shotBtn'), closeCamBtn: gid('closeCamBtn'), fileInput: gid('fileInput'),
+  photoModal: gid('photoModal'), photoPreview: gid('photoPreview'), closePhotoBtn: gid('closePhotoBtn'), savePhotoBtn: gid('savePhotoBtn'), photoCanvas: gid('photoCanvas'),
+  galleryGrid: gid('galleryGrid'), galleryEmpty: gid('galleryEmpty'), stage: gid('stage'), brickZone: gid('brickZone'), cameraBtn: gid('cameraBtn'), resetBtn: gid('resetBtn'), speakBtn: gid('speakBtn')
+};
+
+function gid(id){return document.getElementById(id)}
+function loadJSON(k, fallback){try{const v=JSON.parse(localStorage.getItem(k)); return v ?? fallback}catch(e){return fallback}}
+function saveJSON(k,v){localStorage.setItem(k, JSON.stringify(v))}
+function getTodayKey(){const d = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'})); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dayLabel(){const d = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'})); return `${d.getMonth()+1}월 ${d.getDate()}일`}
+function doneCount(){return state.tasks.filter(t=>state.done[t.id]).length}
+function visibleLimit(){ return doneCount() < 3 ? 3 : 6 }
+function unlockedParts(){ return Math.min(PART_NAMES.length, doneCount()) }
+function allDone(){return doneCount() === state.tasks.length}
+
+function ensureTodayState(){
+  const savedDay = localStorage.getItem('advancedToday');
+  if(savedDay !== state.today){
+    localStorage.setItem('advancedToday', state.today);
+    localStorage.setItem('advancedDone', JSON.stringify({}));
+    localStorage.setItem('advancedBricks', JSON.stringify([]));
+    state.done = {};
+    state.bricks = [];
+    rollDailyModel();
+  } else if(!localStorage.getItem('advancedDailyModel')) {
+    rollDailyModel();
+  }
+}
+
+function rollDailyModel(){
+  let queue = loadJSON('advancedModelQueue', []);
+  let used = loadJSON('advancedModelUsed', []);
+  if(queue.length === 0){
+    const keys = MODELS.map(m=>m.key).filter(k=>!used.includes(k));
+    const pool = keys.length ? keys : MODELS.map(m=>m.key);
+    queue = shuffle([...pool]);
+    if(keys.length === 0) used = [];
+  }
+  const key = queue.shift();
+  used.push(key);
+  saveJSON('advancedModelQueue', queue);
+  saveJSON('advancedModelUsed', used);
+  localStorage.setItem('advancedDailyModel', key);
+}
+function cacheModel(){
+  state.dailyModelKey = localStorage.getItem('advancedDailyModel');
+  if(!state.dailyModelKey){ rollDailyModel(); state.dailyModelKey = localStorage.getItem('advancedDailyModel'); }
+}
+function getModel(){ return MODELS.find(m=>m.key===state.dailyModelKey) || MODELS[0] }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]} return arr }
+
+function render(){
+  updateClock();
+  renderHeader();
+  renderTasks();
+  renderFigure();
+  renderGallery();
+}
+
+function renderHeader(){
+  const total = state.tasks.length;
+  const count = doneCount();
+  el.progressFill.style.width = `${count/total*100}%`;
+  el.progressText.textContent = `${count} / ${total}`;
+  el.brickCount.textContent = String(state.bricks.length);
+  el.photoCount.textContent = String(state.photos.length);
+  const model = getModel();
+  el.modelName.textContent = `오늘의 완성품 · ${model.name}`;
+  el.modelSub.textContent = allDone() ? '모든 파츠가 열려 완성됐어요.' : '미션 완료 때마다 랜덤 블럭이 날아와 파츠를 열어요.';
+  el.dayBadge.textContent = dayLabel();
+}
+
+function renderTasks(){
+  const limit = visibleLimit();
+  el.taskList.innerHTML = '';
+  const visible = state.tasks.slice(0, limit);
+  visible.forEach((task, idx)=>{
+    const card = document.createElement('button');
+    const isDone = !!state.done[task.id];
+    const locked = idx >= 3 && doneCount() < 3;
+    card.className = `task${isDone ? ' done' : ''}${locked ? ' locked' : ''}`;
+    card.innerHTML = `<div class="icon">${task.emoji}</div><div><div class="t1">${task.name}</div><div class="t2">${task.en}</div></div><div class="check">✓</div>`;
+    card.disabled = locked || isDone;
+    card.addEventListener('click', ()=>completeTask(task));
+    el.taskList.appendChild(card);
+  });
+  const total = state.tasks.length;
+  if(doneCount() < 3){
+    el.pageText.textContent = `1단계 · 처음 3개 표시 중`;
+    el.hint.textContent = '첫 3개를 완료하면 아래 미션이 자동으로 열립니다.';
+  } else if(doneCount() < total){
+    el.pageText.textContent = `2단계 · 전체 미션 열림`;
+    el.hint.textContent = '남은 미션을 완료하면 오늘의 완성품이 완성됩니다.';
+  } else {
+    el.pageText.textContent = '완료';
+    el.hint.textContent = '인증샷을 찍고 사진 보관함에 남겨보세요.';
+  }
+}
+
+function renderFigure(){
+  const model = getModel();
+  const figure = buildFigure(model);
+  el.silhouette.innerHTML = figure.map(p=>`<g opacity="0.35">${p}</g>`).join('');
+  el.partsLayer.innerHTML = figure.map((part, idx)=>`<g class="part ${idx < unlockedParts() ? 'on' : ''}">${part}</g>`).join('');
+  el.partsRow.innerHTML = PART_NAMES.map((name, idx)=>`<div class="part-chip ${idx < unlockedParts() ? 'on' : ''}">${name}</div>`).join('');
+  el.completeBanner.classList.toggle('hidden', !allDone());
+}
+
+function buildFigure(model){
+  const skin = '#ffd86b';
+  const a = model.colorA, b = model.colorB, c = model.accent;
+  const head = `
+    <circle cx="90" cy="36" r="20" fill="${skin}" stroke="#c7a84a" stroke-width="2"/>
+    <circle cx="83" cy="33" r="2.5" fill="#332200"/><circle cx="97" cy="33" r="2.5" fill="#332200"/>
+    <path d="M81 43 Q90 49 99 43" stroke="#332200" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <rect x="70" y="8" width="40" height="10" rx="4" fill="${b}" opacity=".85"/>
+    <rect x="72" y="10" width="36" height="6" rx="3" fill="${c}" opacity=".7"/>
+  `;
+  const torso = `
+    <rect x="60" y="60" width="60" height="60" rx="10" fill="${a}" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+    <rect x="70" y="70" width="40" height="42" rx="8" fill="${b}" opacity=".85"/>
+    <rect x="82" y="74" width="16" height="14" rx="4" fill="${c}"/>
+    <rect x="74" y="95" width="32" height="6" rx="3" fill="${c}" opacity=".75"/>
+  `;
+  const leftArm = `
+    <rect x="30" y="64" width="26" height="16" rx="8" fill="${a}"/>
+    <rect x="24" y="76" width="18" height="44" rx="8" fill="${b}"/>
+    <circle cx="33" cy="124" r="9" fill="${skin}" stroke="#c7a84a" stroke-width="2"/>
+  `;
+  const rightArm = `
+    <rect x="124" y="64" width="26" height="16" rx="8" fill="${a}"/>
+    <rect x="138" y="76" width="18" height="44" rx="8" fill="${b}"/>
+    <circle cx="147" cy="124" r="9" fill="${skin}" stroke="#c7a84a" stroke-width="2"/>
+  `;
+  const legs = `
+    <rect x="66" y="122" width="22" height="58" rx="8" fill="${b}"/>
+    <rect x="92" y="122" width="22" height="58" rx="8" fill="${a}"/>
+    <rect x="62" y="176" width="28" height="12" rx="6" fill="#1b243d"/>
+    <rect x="90" y="176" width="28" height="12" rx="6" fill="#1b243d"/>
+  `;
+  return [head, torso, leftArm, rightArm, legs];
+}
+
+function completeTask(task){
+  if(state.done[task.id]) return;
+  state.done[task.id] = { at: Date.now() };
+  saveJSON('advancedDone', state.done);
+  const brick = randomBrick();
+  state.bricks.push(brick);
+  saveJSON('advancedBricks', state.bricks);
+  animateBrick(brick);
+  render();
+  speak(`${task.en}. Great job!`, true);
+  const opened = PART_NAMES[Math.min(unlockedParts()-1, PART_NAMES.length-1)];
+  showToast('🧱', '블럭 획득!', `${opened} 파츠가 열렸어요.`);
+  if(allDone()){
+    setTimeout(()=>{
+      showToast('🏆', '완성 성공!', `${getModel().name} 조립 완료!`);
+      speak(`All missions complete. Your ${getModel().name} is finished.`, true);
+    }, 560);
+  }
+}
+
+function randomBrick(){
+  return {
+    color: BRICK_COLORS[Math.floor(Math.random()*BRICK_COLORS.length)],
+    shape: BRICK_SHAPES[Math.floor(Math.random()*BRICK_SHAPES.length)]
+  }
+}
+
+function animateBrick(brick){
+  const spark = document.createElement('div');
+  spark.className = 'spark';
+  const studs = brick.shape === '2x3' ? 3 : brick.shape === '1x4' ? 4 : brick.shape === '2x2' ? 2 : 2;
+  const rows = brick.shape.startsWith('2x') ? 2 : 1;
+  const width = brick.shape.endsWith('4') ? 44 : brick.shape.endsWith('3') ? 36 : 28;
+  const height = rows === 2 ? 22 : 14;
+  spark.style.width = `${width}px`; spark.style.height = `${height}px`;
+  spark.style.background = brick.color;
+  spark.style.left = '14px'; spark.style.top = '22px';
+  spark.style.border = '1px solid rgba(0,0,0,.18)';
+  let studsHtml = '';
+  for(let r=0;r<rows;r++) for(let i=0;i<studs;i++) studsHtml += `<span style="position:absolute;left:${6+i*10}px;top:${4+r*8}px;width:6px;height:4px;border-radius:999px;background:rgba(255,255,255,.28)"></span>`;
+  spark.innerHTML = studsHtml;
+  el.brickZone.appendChild(spark);
+  const startX = 10, startY = 12;
+  const endX = el.stage.clientWidth/2 - width/2;
+  const endY = el.stage.clientHeight - 140;
+  const drift = 16 + Math.random()*18;
+  spark.animate([
+    {transform:`translate(${startX}px,${startY}px) rotate(-16deg) scale(.9)`, opacity:0},
+    {transform:`translate(${startX+40}px,${startY+12}px) rotate(8deg) scale(1.05)`, opacity:1, offset:.15},
+    {transform:`translate(${endX+drift}px,${endY-50}px) rotate(-12deg) scale(1)`, opacity:1, offset:.72},
+    {transform:`translate(${endX}px,${endY}px) rotate(0deg) scale(.6)`, opacity:0.1}
+  ], {duration:850, easing:'cubic-bezier(.2,.8,.2,1)'});
+  setTimeout(()=>spark.remove(), 900);
+}
+
+function showToast(emoji, title, body){
+  el.toastEmoji.textContent = emoji; el.toastTitle.textContent = title; el.toastBody.textContent = body;
+  el.overlay.classList.add('show');
+  setTimeout(()=>el.overlay.classList.remove('show'), 1450);
+}
+
+function updateClock(){
+  const d = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'}));
+  el.clock.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+setInterval(updateClock, 10000);
+
+function pickVoice(langPrefix){
+  const voices = speechSynthesis.getVoices();
+  const scored = voices
+    .filter(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix))
+    .map(v => ({
+      voice: v,
+      score: (/(natural|enhanced|premium|online)/i.test(v.name) ? 5 : 0) + (!v.localService ? 3 : 0) + (/google|samsung|microsoft|apple/i.test(v.name) ? 2 : 0)
+    }))
+    .sort((a,b)=>b.score-a.score);
+  return scored[0]?.voice || null;
+}
+function speak(text, english=false){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  if(english){ u.lang='en-US'; u.rate=.94; u.pitch=1.02; u.voice = pickVoice('en'); }
+  else { u.lang='ko-KR'; u.rate=.95; u.pitch=1; u.voice = pickVoice('ko'); }
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+async function openCamera(){
+  try{
+    if(!navigator.mediaDevices?.getUserMedia) throw new Error('unsupported');
+    state.stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
+    el.cameraVideo.srcObject = state.stream;
+    el.cameraModal.classList.add('show');
+  }catch(err){
+    el.cameraModal.classList.add('show');
+  }
+}
+function closeCamera(){
+  if(state.stream){ state.stream.getTracks().forEach(t=>t.stop()); state.stream = null; }
+  el.cameraVideo.srcObject = null;
+  el.cameraModal.classList.remove('show');
+}
+function takePhoto(){
+  if(!el.cameraVideo.videoWidth) return;
+  const c = el.photoCanvas; c.width = el.cameraVideo.videoWidth; c.height = el.cameraVideo.videoHeight;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(el.cameraVideo, 0, 0);
+  const data = c.toDataURL('image/jpeg', .92);
+  storePhoto(data);
+  closeCamera();
+  openPhoto(data);
+}
+function storePhoto(data){
+  state.photos.unshift({src:data, at:Date.now()});
+  state.photos = state.photos.slice(0,12);
+  saveJSON('advancedPhotos', state.photos);
+  renderGallery();
+  renderHeader();
+}
+function openPhoto(data){ el.photoPreview.src = data; el.photoModal.classList.add('show'); }
+function closePhoto(){ el.photoModal.classList.remove('show'); }
+function downloadCurrentPhoto(){
+  const a = document.createElement('a');
+  a.href = el.photoPreview.src;
+  a.download = `morning-shot-${state.today}.jpg`;
+  a.click();
+}
+function renderGallery(){
+  el.galleryGrid.innerHTML = '';
+  el.galleryEmpty.style.display = state.photos.length ? 'none' : 'block';
+  state.photos.forEach((p, idx)=>{
+    const d = document.createElement('button');
+    d.className = 'gallery-item';
+    d.innerHTML = `<img src="${p.src}" alt="photo ${idx+1}">`;
+    d.addEventListener('click', ()=>openPhoto(p.src));
+    el.galleryGrid.appendChild(d);
+  });
+}
+function resetDay(){
+  state.done = {}; state.bricks = [];
+  saveJSON('advancedDone', state.done); saveJSON('advancedBricks', state.bricks);
+  render();
+  speak('Today missions reset.', true);
+}
+
+el.cameraBtn.addEventListener('click', openCamera);
+el.resetBtn.addEventListener('click', resetDay);
+el.speakBtn.addEventListener('click', ()=> speak(`Good morning. Today's model is ${getModel().name}. Finish each mission and collect a random Lego block.`, true));
+el.closeCamBtn.addEventListener('click', closeCamera);
+el.shotBtn.addEventListener('click', takePhoto);
+el.closePhotoBtn.addEventListener('click', closePhoto);
+el.savePhotoBtn.addEventListener('click', downloadCurrentPhoto);
+el.fileInput.addEventListener('change', (e)=>{
+  const file = e.target.files?.[0]; if(!file) return;
+  const fr = new FileReader();
+  fr.onload = () => { storePhoto(fr.result); closeCamera(); openPhoto(fr.result); };
+  fr.readAsDataURL(file);
+});
+
+window.addEventListener('beforeunload', closeCamera);
+if('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = ()=>speechSynthesis.getVoices(); }
+render();
+</script>
+</body>
+</html>
