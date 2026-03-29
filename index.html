@@ -12,11 +12,11 @@
   --accent:#00E5FF;--accent2:#FF6B00;--green:#39FF14;--gold:#FFD600;
   --border:rgba(0,229,255,0.2);
 }
-html,body{width:100%;height:100%;overflow:hidden;background:var(--darker);color:white;font-family:'Noto Sans KR',sans-serif;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--darker);color:white;font-family:'Noto Sans KR',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);pointer-events:none;z-index:9999;}
 
 /* ── LAYOUT ── */
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;max-width:480px;margin:0 auto;width:100%;height:100dvh;}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
 
 /* ── HEADER ── */
 .hdr{
@@ -54,14 +54,13 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .edit-btn:active{background:rgba(255,255,255,0.14);}
 
 /* ── MISSION AREA ── */
-.mission-area{flex:1;display:flex;flex-direction:column;padding:10px 12px;gap:6px;overflow:hidden;min-height:0;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px);}
+.mission-area{flex:1;display:flex;flex-direction:column;padding:10px 12px;gap:6px;overflow:hidden;min-height:0;}
 .section-row{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .section-txt{font-size:9px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,0.3);}
 .section-line{flex:1;height:1px;background:var(--border);}
 .done-strip{display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;}
 .done-chip{display:inline-flex;align-items:center;gap:3px;background:rgba(57,255,20,0.07);border:1px solid rgba(57,255,20,0.2);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:rgba(57,255,20,0.6);text-decoration:line-through;}
-.cards-wrap{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-height:0;overflow:auto;padding-right:2px;scrollbar-width:none;}
-.cards-wrap::-webkit-scrollbar{display:none;}
+.cards-wrap{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-height:0;overflow:hidden;}
 
 /* ── TASK CARD ── */
 .task-card{
@@ -104,7 +103,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .remaining-hint{text-align:center;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.2);flex-shrink:0;padding:2px 0;}
 
 /* split layout */
-.split-row{flex:1;display:flex;gap:8px;min-height:0;align-items:stretch;}
+.split-row{flex:1;display:flex;gap:8px;min-height:0;}
 .cards-col{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;}
 .sidebar-col{width:54px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
 .sidebar-label{font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.25);text-align:center;flex-shrink:0;padding:2px 0;}
@@ -132,40 +131,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 }
 .sb-num{font-size:7px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:1px;}
 .sidebar-hint{font-size:7px;color:rgba(255,255,255,0.18);text-align:center;letter-spacing:.5px;padding:2px 0;flex-shrink:0;}
-
-.workshop-col{width:118px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;min-height:0;}
-.workshop-card{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 6px;overflow:hidden;position:relative;min-height:0;}
-.workshop-title{font-size:8px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.35);margin-bottom:6px;}
-.workshop-stage{width:100%;display:flex;align-items:center;justify-content:center;min-height:128px;border-radius:10px;background:radial-gradient(circle at 50% 20%,rgba(0,229,255,0.12),transparent 55%),linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);position:relative;overflow:hidden;}
-.workshop-stage::after{content:'';position:absolute;left:8px;right:8px;bottom:12px;height:8px;border-radius:50%;background:rgba(0,0,0,0.22);filter:blur(4px);}
-.lego-stage-svg{width:92px;height:148px;overflow:visible;position:relative;z-index:2;}
-.brick-counter{margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:34px;}
-.brick-chip{padding:3px 6px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);font-size:9px;font-weight:700;color:rgba(255,255,255,0.72);}
-.brick-legend{margin-top:6px;font-size:9px;color:rgba(255,255,255,0.3);text-align:center;line-height:1.35;}
-.flying-brick{position:fixed;width:26px;height:16px;border-radius:4px;border:1px solid rgba(255,255,255,0.35);box-shadow:0 4px 12px rgba(0,0,0,0.35);z-index:2500;pointer-events:none;}
-.flying-brick::before,.flying-brick::after{content:'';position:absolute;top:2px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.22);} 
-.flying-brick::before{left:5px;} .flying-brick::after{right:5px;}
-@media (max-width:420px){
-  .hdr{padding:8px 12px 8px;}
-  .big-clock{font-size:44px;}
-  .task-card{padding:11px 12px;gap:10px;}
-  .task-name{font-size:14px;}
-  .emoji-box{width:38px;height:38px;font-size:20px;}
-  .workshop-col{width:104px;}
-  .lego-stage-svg{width:78px;height:132px;}
-  .sidebar-col{width:48px;}
-  .sb-item{width:40px;height:40px;}
-}
-@media (max-height:760px){
-  .big-clock{font-size:42px;}
-  .pts-row{margin-top:6px;}
-  .pts-val{font-size:16px;}
-  .task-card{padding:10px 12px;}
-  .lego-stage-svg{width:74px;height:122px;}
-  .workshop-stage{min-height:112px;}
-  .brick-counter{min-height:28px;}
-}
-
 
 /* ── PRAISE TOAST ── */
 .praise-toast{
@@ -267,8 +232,11 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .intro-screen{
   position:fixed;inset:0;background:var(--darker);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:5000;cursor:pointer;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  z-index:7000;cursor:pointer;overflow:hidden;touch-action:manipulation;pointer-events:auto;
 }
+.intro-start-btn{display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:14px 28px;border-radius:14px;border:2px solid var(--accent);background:rgba(0,229,255,0.08);color:var(--accent);font-family:'Black Han Sans',sans-serif;font-size:18px;letter-spacing:1px;box-shadow:0 0 18px rgba(0,229,255,0.18);}
+.intro-start-btn:active{transform:scale(.97);}
+.jarvis-overlay{pointer-events:none;}
 .intro-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
 .intro-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,229,255,0.08) 0%,transparent 65%);pointer-events:none;}
 .intro-inner{position:relative;z-index:2;text-align:center;padding:32px;}
@@ -351,7 +319,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <body>
 
 <!-- INTRO SCREEN -->
-<div class="intro-screen" id="introScreen" onclick="startApp()" role="button" aria-label="시작 화면">
+<div class="intro-screen" id="introScreen" role="button" aria-label="시작 화면">
   <div class="intro-grid"></div>
   <div class="intro-glow"></div>
   <div class="intro-inner">
@@ -359,6 +327,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="intro-title" id="introTitle">아침<span> 미션</span><br>시스템</div>
     <div class="intro-sub">MORNING MISSION SYSTEM</div>
     <div class="intro-tap"><span class="intro-tap-dot"></span> 터치하면 시작합니다</div>
+    <button type="button" class="intro-start-btn" id="introStartBtn">시작하기</button>
   </div>
 </div>
 
@@ -442,16 +411,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="cards-col">
         <div class="cards-wrap" id="cardsWrap"></div>
         <div class="remaining-hint" id="remainHint"></div>
-      </div>
-      <div class="workshop-col">
-        <div class="workshop-card" id="workshopCard">
-          <div class="workshop-title">🧱 조립소</div>
-          <div class="workshop-stage">
-            <svg class="lego-stage-svg" id="legoStageSvg" viewBox="0 0 60 100"></svg>
-          </div>
-          <div class="brick-counter" id="brickCounter"></div>
-          <div class="brick-legend" id="brickLegend">미션을 완료하면 블럭을 획득하고<br>가운데 피규어가 점점 완성돼요</div>
-        </div>
       </div>
       <div class="sidebar-col">
         <div class="sidebar-label">목록</div>
@@ -1149,7 +1108,6 @@ let state = {
   userName: loadName(),
   voiceEnabled: loadVoice(),
   figureIdx: parseInt(localStorage.getItem('ninjaFigIdx')||Math.floor(Math.random()*20)),
-  bricks: (()=>{try{return JSON.parse(localStorage.getItem('ninjaBricks')||'[]')}catch(e){return []}})(),
 };
 
 // ── CLOCK ──
@@ -1371,7 +1329,7 @@ function scrollToOrCheck(task){
   renderSidebar();
 }
 
-function render(){ updateHeader(); renderMissions(); renderSidebar(); renderTitle(); renderLegoMini(); renderWorkshopFigure(); }
+function render(){ updateHeader(); renderMissions(); renderSidebar(); renderTitle(); renderLegoMini(); }
 
 // ── CHECK TASK ──
 function checkTask(task){
@@ -1382,11 +1340,9 @@ function checkTask(task){
   state.totalPoints+=task.points;
   localStorage.setItem('ninjaPoints',state.totalPoints);
 
-  const brick = addRandomBrick();
   playMissionSound();
   showPtsAnim(task);
-  showPraise(task, brick);
-  spawnBrickGain(task.id, brick);
+  showPraise(task);
   // speak mission complete
   setTimeout(()=>{ const en=TASK_EN[task.name]||task.name; speak(en+' — done! Nice work!', true); }, 300);
 
@@ -1405,10 +1361,10 @@ function showPtsAnim(task){
 }
 
 // ── PRAISE ──
-function showPraise(task, brick){
+function showPraise(task){
   const p=PRAISES[Math.floor(Math.random()*PRAISES.length)];
-  const name = brick ? ('블럭 획득 · '+brick.label) : '';
-  showToast(p.e,p.t,((p.s||'+')+task.points+' pts! '+name).trim(),1800);
+  const toast=document.getElementById('overlayBg'); // reuse overlay
+  showToast(p.e,p.t,(p.s||'+')+task.points+' pts!',1700);
   spawnBurst();
 }
 function showRewardAlert(){
@@ -1488,8 +1444,7 @@ function spawnBurst(){
 
 // ── RESET ──
 function resetAll(){
-  state.done={};state.times={};state.outfitChoice=null;state.bricks=[];
-  localStorage.setItem('ninjaBricks', JSON.stringify(state.bricks));
+  state.done={};state.times={};state.outfitChoice=null;
   state.figureIdx = Math.floor(Math.random()*LEGO_FIGURES.length);
   localStorage.setItem('ninjaFigIdx', state.figureIdx);
   document.getElementById('completeScreen').classList.remove('show');
@@ -1702,65 +1657,6 @@ function initDragSort(){
   }
 }
 
-
-const BRICK_TYPES = [
-  {label:'HEAD', color:'#FFD600'},
-  {label:'TORSO', color:'#00E5FF'},
-  {label:'ARM', color:'#39FF14'},
-  {label:'LEG', color:'#FF6B00'},
-  {label:'GEAR', color:'#FF4DA6'},
-  {label:'CORE', color:'#A78BFA'}
-];
-
-function addRandomBrick(){
-  const brick = BRICK_TYPES[Math.floor(Math.random()*BRICK_TYPES.length)];
-  state.bricks.push(brick);
-  if(state.bricks.length > 12) state.bricks = state.bricks.slice(-12);
-  localStorage.setItem('ninjaBricks', JSON.stringify(state.bricks));
-  return brick;
-}
-
-function renderBrickCounter(){
-  const el = document.getElementById('brickCounter');
-  if(!el) return;
-  const recent = state.bricks.slice(-6);
-  el.innerHTML = recent.map(b=>`<span class="brick-chip">${b.label}</span>`).join('');
-}
-
-function spawnBrickGain(taskId, brick){
-  const card = document.getElementById('task-'+taskId);
-  const target = document.querySelector('.workshop-stage');
-  if(!card || !target || !brick) return;
-  const sr = card.getBoundingClientRect();
-  const tr = target.getBoundingClientRect();
-  const b = document.createElement('div');
-  b.className = 'flying-brick';
-  b.style.background = brick.color;
-  b.style.left = (sr.left + sr.width*0.5 - 13) + 'px';
-  b.style.top = (sr.top + sr.height*0.5 - 8) + 'px';
-  document.body.appendChild(b);
-  const dx = (tr.left + tr.width*0.5 - (sr.left + sr.width*0.5));
-  const dy = (tr.top + tr.height*0.68 - (sr.top + sr.height*0.5));
-  b.animate([
-    {transform:'translate(0,0) scale(1) rotate(0deg)', opacity:1},
-    {transform:`translate(${dx}px, ${dy}px) scale(.78) rotate(540deg)`, opacity:1}
-  ], {duration:700, easing:'cubic-bezier(.2,.7,.2,1)'}).onfinish = ()=>{ b.remove(); renderWorkshopFigure(); };
-}
-
-function renderWorkshopFigure(){
-  const svgEl = document.getElementById('legoStageSvg');
-  const legend = document.getElementById('brickLegend');
-  if(!svgEl) return;
-  const parts = getLegoPartsCount();
-  svgEl.innerHTML = buildLegoSVG(1, parts);
-  renderBrickCounter();
-  const done = Object.values(state.done).filter(Boolean).length;
-  const total = Math.max(state.tasks.length, 1);
-  legend.innerHTML = done >= total
-    ? '오늘의 피규어 완성!<br>아래 완료 화면에서 인증샷까지 찍어보세요'
-    : `획득 블럭 ${done} / ${total}<br>미션 완료할수록 피규어가 완성돼요`;
-}
-
 // ── LEGO FIGURE RENDER ──
 function getLegoPartsCount(){
   // map N completed missions → which parts to show (spread evenly across 3 parts)
@@ -1905,20 +1801,42 @@ function playIntroSound(){
 
 // ── INTRO / START ──
 let _appStarted = false;
-function startApp(ev){
-  if(ev){ ev.preventDefault && ev.preventDefault(); ev.stopPropagation && ev.stopPropagation(); }
-  if(_appStarted) return;
+
+function startApp(evt){
+  if(evt){
+    evt.preventDefault && evt.preventDefault();
+    evt.stopPropagation && evt.stopPropagation();
+  }
+  if(_appStarted) return false;
   _appStarted = true;
+
   const intro = document.getElementById('introScreen');
-  if(!intro) return;
-  intro.classList.add('fade-out');
+  if(!intro) return false;
+
   intro.style.pointerEvents = 'none';
+  intro.classList.add('fade-out');
   playIntroSound();
+
   setTimeout(()=>{
     intro.style.display='none';
-    intro.setAttribute('aria-hidden','true');
     showJarvisGreeting();
   }, 600);
+  return false;
+}
+
+function setupIntroStart(){
+  const intro = document.getElementById('introScreen');
+  const btn = document.getElementById('introStartBtn');
+  if(!intro) return;
+
+  const handler = (e) => startApp(e);
+  ['click','pointerup','touchend'].forEach(name => {
+    intro.addEventListener(name, handler, {passive:false});
+    if(btn) btn.addEventListener(name, handler, {passive:false});
+  });
+  intro.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' ') startApp(e);
+  });
 }
 
 function showJarvisGreeting(){
@@ -1975,21 +1893,11 @@ function setVoice(on){
   document.getElementById('voiceOffBtn').classList.toggle('selected', !on);
 }
 
-function bindIntroStart(){
-  const intro = document.getElementById('introScreen');
-  if(!intro) return;
-  const handler = (e) => startApp(e);
-  intro.addEventListener('click', handler, {passive:false});
-  intro.addEventListener('touchend', handler, {passive:false});
-  intro.addEventListener('pointerup', handler, {passive:false});
-  intro.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') startApp(e); });
-}
-
 // ── INIT ──
 if(!localStorage.getItem('ninjaFigIdx')){ localStorage.setItem('ninjaFigIdx',state.figureIdx); }
-bindIntroStart();
 updateClock(); setInterval(updateClock,10000);
 render(); renderTitle();
+setupIntroStart();
 
 // update intro title text
 const introTitleEl = document.getElementById('introTitle');
