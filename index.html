@@ -267,7 +267,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .intro-screen{
   position:fixed;inset:0;background:var(--darker);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:5000;cursor:pointer;overflow:hidden;
+  z-index:5000;cursor:pointer;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 }
 .intro-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
 .intro-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,229,255,0.08) 0%,transparent 65%);pointer-events:none;}
@@ -351,7 +351,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <body>
 
 <!-- INTRO SCREEN -->
-<div class="intro-screen" id="introScreen" onclick="startApp()">
+<div class="intro-screen" id="introScreen" onclick="startApp()" role="button" aria-label="시작 화면">
   <div class="intro-grid"></div>
   <div class="intro-glow"></div>
   <div class="intro-inner">
@@ -1904,12 +1904,19 @@ function playIntroSound(){
 }
 
 // ── INTRO / START ──
-function startApp(){
+let _appStarted = false;
+function startApp(ev){
+  if(ev){ ev.preventDefault && ev.preventDefault(); ev.stopPropagation && ev.stopPropagation(); }
+  if(_appStarted) return;
+  _appStarted = true;
   const intro = document.getElementById('introScreen');
+  if(!intro) return;
   intro.classList.add('fade-out');
+  intro.style.pointerEvents = 'none';
   playIntroSound();
   setTimeout(()=>{
     intro.style.display='none';
+    intro.setAttribute('aria-hidden','true');
     showJarvisGreeting();
   }, 600);
 }
@@ -1968,8 +1975,19 @@ function setVoice(on){
   document.getElementById('voiceOffBtn').classList.toggle('selected', !on);
 }
 
+function bindIntroStart(){
+  const intro = document.getElementById('introScreen');
+  if(!intro) return;
+  const handler = (e) => startApp(e);
+  intro.addEventListener('click', handler, {passive:false});
+  intro.addEventListener('touchend', handler, {passive:false});
+  intro.addEventListener('pointerup', handler, {passive:false});
+  intro.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') startApp(e); });
+}
+
 // ── INIT ──
 if(!localStorage.getItem('ninjaFigIdx')){ localStorage.setItem('ninjaFigIdx',state.figureIdx); }
+bindIntroStart();
 updateClock(); setInterval(updateClock,10000);
 render(); renderTitle();
 
