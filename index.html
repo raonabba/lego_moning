@@ -1,1921 +1,395 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>닌자 아침 미션 🥷</title>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --dark:#0D1117;--darker:#080B0F;--panel:#161C26;--panel2:#1E2736;
-  --accent:#00E5FF;--accent2:#FF6B00;--green:#39FF14;--gold:#FFD600;
-  --border:rgba(0,229,255,0.2);
-}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--darker);color:white;font-family:'Noto Sans KR',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);pointer-events:none;z-index:9999;}
-
-/* ── LAYOUT ── */
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
-
-/* ── HEADER ── */
-.hdr{
-  flex-shrink:0;
-  background:var(--dark);border-bottom:2px solid var(--accent);
-  padding:10px 16px 10px;position:relative;overflow:hidden;
-}
-.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
-.hdr-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 30%,rgba(0,229,255,0.1) 0%,transparent 60%);pointer-events:none;}
-.hdr-inner{position:relative;z-index:2;}
-.hdr-clock-row{text-align:center;margin-bottom:6px;}
-.big-clock{font-family:'Black Han Sans',sans-serif;font-size:52px;color:var(--accent);letter-spacing:4px;text-shadow:0 0 24px rgba(0,229,255,0.5);line-height:1;}
-.date-lbl{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:2px;margin-top:2px;}
-.hdr-row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.title{font-family:'Black Han Sans',sans-serif;font-size:18px;line-height:1.1;cursor:pointer;color:white;border-bottom:1px dashed rgba(255,255,255,0.2);padding-bottom:1px;transition:border-color .2s;}
-.title:hover{border-color:var(--accent);}
-.title-input{font-family:'Black Han Sans',sans-serif;font-size:18px;background:transparent;border:none;border-bottom:2px solid var(--accent);color:white;outline:none;width:100%;padding-bottom:1px;letter-spacing:.5px;}
-.hdr-row2{display:flex;gap:10px;align-items:center;}
-.power-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);}
-.power-bar-fill{height:100%;background:linear-gradient(90deg,#00E5FF,#39FF14);border-radius:2px;transition:width .5s ease;box-shadow:0 0 6px rgba(0,229,255,0.5);}
-.power-lbl{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);}
-.power-count{font-size:11px;color:rgba(255,255,255,0.45);font-weight:700;white-space:nowrap;}
-.pts-row{display:flex;gap:8px;margin-top:8px;}
-.pts-chip{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:6px 10px;position:relative;overflow:hidden;}
-.pts-chip::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;}
-.pts-chip.gold::before{background:var(--gold);}
-.pts-chip.cyan::before{background:var(--accent);}
-.pts-lbl{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.35);font-weight:700;}
-.pts-val{font-family:'Black Han Sans',sans-serif;font-size:18px;color:var(--gold);}
-.pts-val.cyan{color:var(--accent);}
-.pts-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:1px;}
-.reward-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-top:4px;}
-.reward-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s ease;box-shadow:0 0 4px rgba(255,214,0,0.5);}
-.edit-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:6px 10px;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;}
-.edit-btn:active{background:rgba(255,255,255,0.14);}
-
-/* ── MISSION AREA ── */
-.mission-area{flex:1;display:flex;flex-direction:column;padding:10px 12px;gap:6px;overflow:hidden;min-height:0;}
-.section-row{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.section-txt{font-size:9px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,0.3);}
-.section-line{flex:1;height:1px;background:var(--border);}
-.done-strip{display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;}
-.done-chip{display:inline-flex;align-items:center;gap:3px;background:rgba(57,255,20,0.07);border:1px solid rgba(57,255,20,0.2);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:rgba(57,255,20,0.6);text-decoration:line-through;}
-.cards-wrap{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-height:0;overflow:hidden;}
-
-/* ── TASK CARD ── */
-.task-card{
-  background:var(--panel);border:1px solid rgba(255,255,255,0.08);border-radius:10px;
-  padding:13px 14px;display:flex;align-items:center;gap:12px;
-  cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;
-  user-select:none;-webkit-user-select:none;
-  animation:card-in .3s ease both;
-}
-@keyframes card-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.task-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(255,255,255,0.08);transition:background .3s;}
-.task-card:active{transform:scale(0.97);}
-.task-card.current{border-color:var(--accent);box-shadow:0 0 18px rgba(0,229,255,0.12);}
-.task-card.current::before{background:var(--accent);box-shadow:0 0 8px var(--accent);}
-.task-card.upcoming{opacity:0.5;}
-.task-card.done{background:rgba(57,255,20,0.06);border-color:rgba(57,255,20,0.25);opacity:0.7;}
-.task-card.done::before{background:var(--green);}
-.task-card.done .task-name{text-decoration:line-through;color:rgba(255,255,255,0.35);}
-.emoji-box{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:var(--panel2);border:1px solid rgba(255,255,255,0.08);transition:transform .3s;}
-.task-card.done .emoji-box{transform:scale(1.05);}
-.task-info{flex:1;min-width:0;}
-.task-num{font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.2);margin-bottom:2px;}
-.task-name{font-size:15px;font-weight:700;color:white;transition:all .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.task-time{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;min-height:14px;letter-spacing:1px;}
-.task-card.done .task-time{color:var(--green);}
-.task-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-.task-pts{font-size:10px;font-weight:700;color:var(--gold);opacity:.6;}
-.task-card.done .task-pts{opacity:0;}
-.check-btn{width:32px;height:32px;border-radius:6px;border:1.5px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--panel2);color:transparent;transition:all .3s;}
-.task-card.done .check-btn{background:var(--green);border-color:var(--green);color:#000;box-shadow:0 0 10px rgba(57,255,20,0.4);}
-
-/* outfit */
-.outfit-sel{background:var(--darker);border-radius:6px;padding:7px 9px;margin:5px 0 1px;border:1px solid var(--border);}
-.outfit-lbl{font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;letter-spacing:1px;}
-.outfit-btns{display:flex;gap:6px;}
-.outfit-btn{flex:1;padding:6px;border-radius:5px;border:1px solid rgba(255,255,255,0.15);background:var(--panel2);font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;text-align:center;font-family:'Noto Sans KR',sans-serif;transition:all .2s;}
-.outfit-btn.selected{border-color:var(--accent);background:rgba(0,229,255,0.1);color:var(--accent);}
-
-/* remaining hint */
-.remaining-hint{text-align:center;font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.2);flex-shrink:0;padding:2px 0;}
-
-/* split layout */
-.split-row{flex:1;display:flex;gap:8px;min-height:0;}
-.cards-col{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;}
-.sidebar-col{width:54px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
-.sidebar-label{font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.25);text-align:center;flex-shrink:0;padding:2px 0;}
-.sidebar-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px;padding:2px 0;scrollbar-width:none;min-height:0;}
-.sidebar-list::-webkit-scrollbar{display:none;}
-.sb-item{
-  width:44px;height:44px;border-radius:8px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  background:var(--panel);border:1px solid rgba(255,255,255,0.08);
-  cursor:grab;transition:background .2s,border .2s,opacity .2s,transform .15s;flex-shrink:0;position:relative;
-  font-size:20px;touch-action:none;
-}
-.sb-item.sb-done{background:rgba(57,255,20,0.08);border-color:rgba(57,255,20,0.25);cursor:default;}
-.sb-item.sb-done::after{content:'✓';position:absolute;bottom:1px;right:3px;font-size:9px;font-weight:900;color:var(--green);}
-.sb-item.sb-active{border-color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,0.2);}
-.sb-item.sb-dragging{opacity:.35;transform:scale(.9);}
-.sb-item.sb-over{border-color:var(--accent2);box-shadow:0 0 10px rgba(255,107,0,0.4);transform:scale(1.08);}
-.sb-ghost{
-  position:fixed;width:44px;height:44px;border-radius:8px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  background:var(--panel2);border:2px solid var(--accent);
-  font-size:20px;pointer-events:none;z-index:3000;
-  box-shadow:0 6px 24px rgba(0,229,255,0.3);
-  transition:none;opacity:.95;
-}
-.sb-num{font-size:7px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:1px;}
-.sidebar-hint{font-size:7px;color:rgba(255,255,255,0.18);text-align:center;letter-spacing:.5px;padding:2px 0;flex-shrink:0;}
-
-/* ── PRAISE TOAST ── */
-.praise-toast{
-  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
-  background:var(--panel);border:2px solid var(--accent);border-radius:16px;
-  padding:22px 28px;text-align:center;
-  box-shadow:0 0 40px rgba(0,229,255,0.25),0 20px 60px rgba(0,0,0,0.7);
-  z-index:1500;transition:all .4s cubic-bezier(.34,1.56,.64,1);min-width:240px;pointer-events:none;
-}
-.praise-toast.show{transform:translate(-50%,-50%) scale(1);}
-.praise-emoji{font-size:48px;display:block;margin-bottom:8px;animation:bounce .4s ease infinite alternate;}
-@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-7px)}}
-.praise-text{font-family:'Black Han Sans',sans-serif;font-size:20px;color:var(--accent);text-shadow:0 0 14px rgba(0,229,255,0.5);margin-bottom:4px;}
-.praise-sub{font-size:12px;color:var(--gold);font-weight:700;}
-
-/* ── COMPLETE ── */
-.complete-screen{
-  position:fixed;inset:0;background:var(--darker);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:1200;transform:translateY(100%);transition:transform .5s cubic-bezier(.34,1.56,.64,1);
-  padding:28px;text-align:center;overflow:hidden;
-}
-.complete-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,0.18) 0%,transparent 55%),radial-gradient(ellipse at 50% 100%,rgba(255,107,0,0.12) 0%,transparent 55%);}
-.c-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);background-size:28px 28px;}
-.complete-screen.show{transform:translateY(0);}
-.c-inner{position:relative;z-index:2;width:100%;}
-.c-badge{display:inline-block;background:rgba(255,107,0,0.18);border:1px solid var(--accent2);border-radius:4px;padding:3px 12px;font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:3px;margin-bottom:14px;}
-.c-emoji{font-size:64px;margin-bottom:12px;animation:float 2s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.c-title{font-family:'Black Han Sans',sans-serif;font-size:34px;color:var(--accent);text-shadow:0 0 28px rgba(0,229,255,0.5);margin-bottom:6px;letter-spacing:2px;}
-.c-sub{font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:4px;}
-.c-time{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:24px;}
-.c-btn1{background:var(--accent);color:#000;border:none;border-radius:10px;padding:15px 28px;font-size:16px;font-weight:900;font-family:'Noto Sans KR',sans-serif;cursor:pointer;box-shadow:0 0 18px rgba(0,229,255,0.35);transition:transform .2s;margin-bottom:10px;display:block;width:100%;}
-.c-btn1:active{transform:scale(.95);}
-.c-btn2{background:transparent;color:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 20px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;width:100%;}
-
-/* ── EDIT PANEL ── */
-.edit-panel{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1100;display:none;flex-direction:column;}
-.edit-panel.show{display:flex;}
-.edit-header{background:var(--dark);border-bottom:2px solid var(--accent);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.edit-title{font-family:'Black Han Sans',sans-serif;font-size:18px;color:var(--accent);}
-.edit-close{background:var(--accent);border:none;border-radius:6px;color:#000;padding:6px 14px;font-size:13px;font-weight:900;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
-.edit-cancel{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:rgba(255,255,255,0.5);padding:6px 12px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
-.edit-card.edit-dragging{opacity:.4;background:var(--panel2);}
-.edit-card.edit-over{border-color:var(--accent2);box-shadow:0 0 8px rgba(255,107,0,0.3);}
-.edit-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
-.edit-card{background:var(--panel);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
-.edit-card .emoji-pick{font-size:22px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--panel2);border:1px solid rgba(255,255,255,0.1);border-radius:7px;cursor:pointer;flex-shrink:0;}
-.edit-card input{flex:1;background:var(--panel2);border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:white;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;padding:7px 10px;outline:none;}
-.edit-card input:focus{border-color:var(--accent);}
-.edit-del{background:rgba(255,45,45,0.15);border:1px solid rgba(255,45,45,0.3);border-radius:6px;color:rgba(255,100,100,0.8);padding:6px 8px;font-size:12px;cursor:pointer;flex-shrink:0;}
-.edit-drag{color:rgba(255,255,255,0.2);font-size:16px;cursor:grab;padding:0 4px;flex-shrink:0;}
-.add-mission-row{display:flex;gap:8px;flex-shrink:0;padding:0 14px 14px;}
-.add-mission-input{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:8px;color:white;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;padding:10px 12px;outline:none;}
-.add-mission-input:focus{border-color:var(--accent);}
-.add-mission-btn{background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:900;cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;}
-
-/* ── EMOJI PICKER ── */
-.emoji-picker{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:0;display:none;flex-direction:column;width:272px;z-index:2000;box-shadow:0 8px 32px rgba(0,0,0,0.6);overflow:hidden;}
-.emoji-picker.show{display:flex;}
-.ep-tabs{display:flex;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.08);scrollbar-width:none;}
-.ep-tabs::-webkit-scrollbar{display:none;}
-.ep-tab{flex-shrink:0;padding:6px 10px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;letter-spacing:1px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;}
-.ep-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.ep-grid{display:flex;flex-wrap:wrap;gap:3px;padding:8px;max-height:160px;overflow-y:auto;}
-.ep-item{font-size:22px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;transition:background .15s;}
-.ep-item:hover{background:rgba(255,255,255,0.12);}
-
-/* ── CAMERA ── */
-.cam-wrap{position:fixed;inset:0;background:#000;z-index:2100;display:none;flex-direction:column;align-items:center;justify-content:center;}
-.cam-wrap.show{display:flex;}
-#camVideo{width:100%;max-width:480px;border-radius:14px;max-height:70vh;object-fit:cover;}
-.cam-ctrls{display:flex;gap:20px;margin-top:18px;align-items:center;}
-.shutter{width:68px;height:68px;border-radius:50%;background:var(--accent);border:4px solid rgba(0,229,255,0.3);cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;transition:transform .15s;box-shadow:0 0 18px rgba(0,229,255,0.4);}
-.shutter:active{transform:scale(.9);}
-.cam-cancel{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-#photoCanvas{display:none;}
-.photo-result{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:2200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
-.photo-result.show{display:flex;}
-#resultImg{max-width:280px;border-radius:12px;border:2px solid var(--accent);box-shadow:0 0 28px rgba(0,229,255,0.25);}
-.photo-praise{font-family:'Black Han Sans',sans-serif;font-size:18px;color:var(--accent);text-shadow:0 0 14px rgba(0,229,255,0.5);margin:12px 0 6px;text-align:center;letter-spacing:1px;}
-.photo-btns{display:flex;gap:10px;margin-top:8px;}
-.photo-save{background:var(--accent);color:#000;border:none;border-radius:8px;padding:11px 18px;font-size:13px;font-weight:900;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
-.photo-close{background:rgba(255,255,255,0.08);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:11px 18px;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
-
-/* overlays */
-.overlay-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1400;display:none;}
-.overlay-bg.show{display:block;}
-.confetti{position:fixed;inset:0;pointer-events:none;z-index:500;overflow:hidden;}
-.confetti-piece{position:absolute;animation:cffall linear forwards;}
-@keyframes cffall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-.pts-float{position:absolute;right:12px;top:6px;font-family:'Black Han Sans',sans-serif;font-size:15px;color:var(--gold);text-shadow:0 0 8px rgba(255,214,0,0.5);animation:ptsfloat 1s ease forwards;pointer-events:none;}
-@keyframes ptsfloat{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-32px)}}
-.burst-layer{position:fixed;inset:0;pointer-events:none;z-index:500;}
-.burst-p{position:absolute;font-size:18px;animation:burstfly 1s ease forwards;pointer-events:none;}
-@keyframes burstfly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-55px) scale(.4)}}
-
-/* ── INTRO SCREEN ── */
-.intro-screen{
-  position:fixed;inset:0;background:var(--darker);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:7000;cursor:pointer;overflow:hidden;touch-action:manipulation;pointer-events:auto;
-}
-.intro-start-btn{display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:14px 28px;border-radius:14px;border:2px solid var(--accent);background:rgba(0,229,255,0.08);color:var(--accent);font-family:'Black Han Sans',sans-serif;font-size:18px;letter-spacing:1px;box-shadow:0 0 18px rgba(0,229,255,0.18);}
-.intro-start-btn:active{transform:scale(.97);}
-.jarvis-overlay{pointer-events:none;}
-.intro-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
-.intro-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,229,255,0.08) 0%,transparent 65%);pointer-events:none;}
-.intro-inner{position:relative;z-index:2;text-align:center;padding:32px;}
-.intro-icon{font-size:72px;margin-bottom:20px;animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-.intro-title{
-  font-family:'Black Han Sans',sans-serif;
-  font-size:28px;color:white;letter-spacing:2px;
-  margin-bottom:8px;line-height:1.3;
-}
-.intro-title span{color:var(--accent);text-shadow:0 0 20px rgba(0,229,255,0.6);}
-.intro-sub{font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:40px;}
-.intro-tap{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1.5px solid var(--accent);border-radius:30px;
-  padding:14px 28px;
-  font-family:'Black Han Sans',sans-serif;
-  font-size:16px;color:var(--accent);letter-spacing:2px;
-  animation:pulse-border 2s ease-in-out infinite;
-}
-@keyframes pulse-border{
-  0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.4);}
-  50%{box-shadow:0 0 0 10px rgba(0,229,255,0);}
-}
-.intro-tap-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:blink 1s step-end infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.intro-screen.fade-out{animation:intro-fade .6s ease forwards;}
-@keyframes intro-fade{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.04)}}
-
-/* ── JARVIS GREETING ── */
-.jarvis-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.88);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:4000;pointer-events:none;opacity:0;
-  transition:opacity .4s ease;
-}
-.jarvis-overlay.show{opacity:1;}
-.jarvis-lines{text-align:center;padding:24px;}
-.jarvis-line{
-  font-family:'Black Han Sans',sans-serif;
-  font-size:22px;color:var(--accent);
-  text-shadow:0 0 20px rgba(0,229,255,0.5);
-  letter-spacing:2px;line-height:1.6;
-  opacity:0;transform:translateY(10px);
-  transition:opacity .5s ease,transform .5s ease;
-}
-.jarvis-line.show{opacity:1;transform:translateY(0);}
-.jarvis-scan{width:200px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:16px auto;animation:scan-h 1.5s ease-in-out infinite;opacity:0;transition:opacity .4s;}
-.jarvis-scan.show{opacity:1;}
-@keyframes scan-h{0%{transform:translateX(-60px)}100%{transform:translateX(60px)}}
-
-/* ── LEGO FIGURE ── */
-.lego-wrap{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;flex-shrink:0;
-  background:var(--panel);border:1px solid var(--border);border-radius:8px;
-  padding:4px 2px 6px;
-}
-.lego-svg-mini{width:46px;height:80px;overflow:visible;}
-.lego-label{font-size:6px;font-weight:700;letter-spacing:0.5px;color:rgba(0,229,255,0.6);text-align:center;white-space:nowrap;overflow:hidden;max-width:50px;text-overflow:ellipsis;}
-.lego-progress{font-size:9px;font-weight:700;color:var(--gold);text-align:center;}
-.lego-complete-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin:12px 0;}
-.lego-svg-big{width:130px;height:180px;overflow:visible;}
-.lego-complete-name{font-family:'Black Han Sans',sans-serif;font-size:16px;color:var(--gold);letter-spacing:2px;text-shadow:0 0 10px rgba(255,214,0,0.4);}
-
-/* ── SETTINGS PANEL (name edit) ── */
-.settings-panel{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1100;display:none;flex-direction:column;}
-.settings-panel.show{display:flex;}
-.settings-header{background:var(--dark);border-bottom:2px solid var(--accent);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.settings-title{font-family:'Black Han Sans',sans-serif;font-size:18px;color:var(--accent);}
-.settings-body{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:16px;}
-.settings-row{display:flex;flex-direction:column;gap:6px;}
-.settings-lbl{font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.4);}
-.settings-input{background:var(--panel);border:1px solid var(--border);border-radius:8px;color:white;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;padding:12px 14px;outline:none;width:100%;}
-.settings-input:focus{border-color:var(--accent);}
-.settings-hint{font-size:11px;color:rgba(255,255,255,0.25);margin-top:2px;}
-.settings-save{background:var(--accent);color:#000;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:900;font-family:'Noto Sans KR',sans-serif;cursor:pointer;width:100%;margin-top:8px;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>모닝 미션</title>
+  <style>
+    :root{
+      --bg:#0f172a;--panel:#111827;--panel2:#1f2937;--line:#334155;--text:#f8fafc;--sub:#94a3b8;
+      --accent:#22d3ee;--accent2:#f59e0b;--ok:#22c55e;--danger:#ef4444;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;height:100%;background:linear-gradient(180deg,#020617,#0f172a 30%,#111827);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif}
+    body{overflow:hidden}
+    button,input{font:inherit}
+    .app{max-width:480px;height:100%;margin:0 auto;display:flex;flex-direction:column;position:relative}
+    .top{padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 10px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(2,6,23,.8);backdrop-filter:blur(8px)}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .title{font-size:22px;font-weight:800}
+    .sub{font-size:12px;color:var(--sub)}
+    .iconbtn{border:1px solid rgba(255,255,255,.1);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
+    .progress{margin-top:10px;background:#0b1220;border:1px solid rgba(255,255,255,.08);border-radius:999px;height:14px;overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--ok));transition:width .35s ease}
+    .content{flex:1;min-height:0;overflow:auto;padding:12px 14px 100px}
+    .hero{display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:start}
+    .card{background:rgba(17,24,39,.9);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+    .figureBox{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px}
+    .figureTitle{font-size:12px;color:var(--sub);margin-bottom:8px}
+    .figureStage{width:120px;height:170px;position:relative;display:flex;align-items:center;justify-content:center}
+    .part{position:absolute;opacity:.14;transform:translateY(6px) scale(.98);transition:all .35s ease;filter:grayscale(.25)}
+    .part.show{opacity:1;transform:translateY(0) scale(1);filter:none}
+    .head{top:0;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fde68a,#f59e0b 70%,#b45309);border:3px solid #78350f}
+    .hair{position:absolute;top:-6px;left:8px;width:56px;height:22px;border-radius:20px 20px 8px 8px;background:#3f2a1e}
+    .eye{position:absolute;top:28px;width:8px;height:8px;border-radius:50%;background:#111827}
+    .eye.left{left:18px}.eye.right{right:18px}
+    .mouth{position:absolute;left:50%;top:46px;transform:translateX(-50%);width:22px;height:10px;border-bottom:3px solid #7c2d12;border-radius:0 0 20px 20px}
+    .body{top:64px;width:96px;height:62px;border-radius:18px 18px 14px 14px;background:linear-gradient(180deg,#38bdf8,#0ea5e9);border:3px solid #0c4a6e}
+    .body:before,.body:after{content:'';position:absolute;top:10px;width:22px;height:54px;border-radius:14px;background:#fde68a;border:3px solid #78350f}
+    .body:before{left:-12px}.body:after{right:-12px}
+    .badge{position:absolute;left:50%;top:16px;transform:translateX(-50%);background:#f8fafc;color:#0369a1;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:800}
+    .legs{top:122px;width:92px;height:46px}
+    .leg{position:absolute;bottom:0;width:34px;height:46px;border-radius:12px;background:linear-gradient(180deg,#475569,#1e293b);border:3px solid #0f172a}
+    .leg.left{left:8px}.leg.right{right:8px}
+    .brickCount{margin-top:10px;font-size:13px;font-weight:700;color:#fde68a}
+    .floatZone{position:relative;height:28px;width:100%;overflow:visible}
+    .floatBrick{position:absolute;left:50%;top:0;transform:translate(-50%,0);padding:6px 10px;border-radius:12px;background:#f59e0b;color:#111827;font-size:12px;font-weight:800;animation:fly .8s ease forwards}
+    @keyframes fly{0%{opacity:0;transform:translate(-50%,20px) scale(.7)}20%{opacity:1}100%{opacity:0;transform:translate(90px,-50px) scale(1)}}
+    .sectionTitle{font-size:13px;font-weight:800;margin-bottom:8px;color:#cbd5e1}
+    .missionList{display:flex;flex-direction:column;gap:10px}
+    .mission{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:#0b1220;border:1px solid rgba(255,255,255,.07);cursor:pointer;touch-action:manipulation}
+    .mission.done{opacity:.56}
+    .emoji{width:42px;height:42px;border-radius:12px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+    .mMain{flex:1;min-width:0}.mName{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mMeta{font-size:12px;color:var(--sub);margin-top:2px}
+    .chk{width:28px;height:28px;border-radius:10px;border:2px solid #475569;display:flex;align-items:center;justify-content:center;color:transparent;flex:none}
+    .mission.done .chk{background:var(--ok);border-color:var(--ok);color:#052e16}
+    .hint{font-size:12px;color:var(--sub);text-align:center;margin-top:8px}
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .gallery img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+    .overlay{position:fixed;inset:0;background:linear-gradient(180deg,#020617,#0f172a);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+    .startCard{width:min(100%,420px);text-align:center;background:rgba(17,24,39,.96);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+    .startBtn{width:100%;margin-top:18px;border:none;background:linear-gradient(90deg,var(--accent),#67e8f9);color:#082f49;font-weight:900;padding:16px 18px;border-radius:16px;cursor:pointer;touch-action:manipulation}
+    .muted{color:var(--sub);font-size:13px;line-height:1.45}
+    .sheet{position:fixed;inset:auto 0 0 0;max-width:480px;margin:0 auto;background:#0b1220;border-top:1px solid rgba(255,255,255,.08);border-radius:22px 22px 0 0;z-index:40;padding:16px;transform:translateY(110%);transition:transform .25s ease;left:50%;translate:-50% 0;max-height:82vh;overflow:auto}
+    .sheet.show{transform:translateY(0)}
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:39;display:none}
+    .backdrop.show{display:block}
+    .sheet input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #334155;background:#111827;color:#fff;margin-bottom:8px}
+    .sheetRow{display:flex;gap:8px;align-items:center}
+    .small{font-size:12px;color:var(--sub)}
+    .actions{display:flex;gap:8px;position:sticky;bottom:0;background:#0b1220;padding-top:10px}
+    .btn{flex:1;border:none;border-radius:14px;padding:13px 14px;font-weight:800;cursor:pointer}
+    .btn.primary{background:var(--accent);color:#083344}.btn.gray{background:#1f2937;color:#e2e8f0}.btn.warn{background:#7f1d1d;color:#fee2e2}
+    .cameraWrap{display:none;flex-direction:column;gap:10px;align-items:center}
+    .cameraWrap video{width:100%;max-height:52vh;border-radius:16px;background:#000}
+    .cameraWrap.show{display:flex}
+    .fab{position:fixed;right:max(16px,calc((100vw - 480px)/2 + 16px));bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;gap:8px;z-index:20}
+    .fab button{border:none;border-radius:999px;padding:14px 16px;background:#22d3ee;color:#083344;font-weight:900;box-shadow:0 10px 20px rgba(0,0,0,.25);cursor:pointer}
+    @media (max-width:380px){ .hero{grid-template-columns:1fr} .figureBox{min-height:200px} .fab{right:14px} }
+  </style>
 </head>
 <body>
-
-<!-- INTRO SCREEN -->
-<div class="intro-screen" id="introScreen" role="button" aria-label="시작 화면">
-  <div class="intro-grid"></div>
-  <div class="intro-glow"></div>
-  <div class="intro-inner">
-    <div class="intro-icon">🥷</div>
-    <div class="intro-title" id="introTitle">아침<span> 미션</span><br>시스템</div>
-    <div class="intro-sub">MORNING MISSION SYSTEM</div>
-    <div class="intro-tap"><span class="intro-tap-dot"></span> 터치하면 시작합니다</div>
-    <button type="button" class="intro-start-btn" id="introStartBtn">시작하기</button>
+<div class="overlay" id="startOverlay">
+  <div class="startCard">
+    <div style="font-size:54px">🌞</div>
+    <div class="title" style="margin-top:6px">모닝 미션</div>
+    <p class="muted" style="margin:12px 0 0">시작 버튼을 누르면 바로 들어가도록 다시 만들었어. GitHub/Vercel 배포용 정적 앱이라 모바일에서도 안정적으로 동작해.</p>
+    <button class="startBtn" id="startBtn" type="button">시작하기</button>
   </div>
 </div>
 
-<!-- JARVIS OVERLAY -->
-<div class="jarvis-overlay" id="jarvisOverlay">
-  <div class="jarvis-lines">
-    <div class="jarvis-scan" id="jarvisScan"></div>
-    <div class="jarvis-line" id="jLine1"></div>
-    <div class="jarvis-line" id="jLine2"></div>
-    <div class="jarvis-line" id="jLine3"></div>
-  </div>
-</div>
-
-<!-- SETTINGS PANEL -->
-<div class="settings-panel" id="settingsPanel">
-  <div class="settings-header">
-    <div class="settings-title">⚙ 설정</div>
-    <button class="edit-close" onclick="closeSettings()">✓ 저장</button>
-  </div>
-  <div class="settings-body">
-    <div class="settings-row">
-      <div class="settings-lbl">👤 이름</div>
-      <input class="settings-input" id="nameInput" placeholder="이름을 입력하세요" maxlength="10">
-      <div class="settings-hint">자비스가 이 이름으로 인사해요</div>
-    </div>
-    <div class="settings-row">
-      <div class="settings-lbl">🔊 음성 안내</div>
-      <div style="display:flex;gap:8px;margin-top:4px;">
-        <button class="outfit-btn" id="voiceOnBtn" onclick="setVoice(true)">켜기</button>
-        <button class="outfit-btn" id="voiceOffBtn" onclick="setVoice(false)">끄기</button>
+<div class="app">
+  <div class="top">
+    <div class="row">
+      <div>
+        <div class="title" id="appTitle">모닝 미션</div>
+        <div class="sub" id="clockText">--:--</div>
       </div>
-      <div class="settings-hint">음성이 지원되지 않는 기기도 있어요</div>
+      <button class="iconbtn" id="editOpenBtn" type="button">편집</button>
     </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="sub" id="progressText" style="margin-top:6px">0 / 0 완료</div>
   </div>
-</div>
 
-<!-- MAIN SCREEN -->
-<div class="screen" id="mainScreen">
-  <div class="hdr">
-    <div class="hdr-grid"></div><div class="hdr-glow"></div>
-    <div class="hdr-inner">
-      <div class="hdr-clock-row">
-        <div class="big-clock" id="clockEl">--:--</div>
-        <div class="date-lbl" id="dateEl">...</div>
+  <div class="content">
+    <div class="hero">
+      <div class="card">
+        <div class="sectionTitle">오늘의 미션</div>
+        <div class="missionList" id="missionList"></div>
+        <div class="hint" id="pageHint"></div>
       </div>
-      <div class="hdr-row1">
-        <div class="title" id="titleDisplay" onclick="startTitleEdit()">닌자 아침 미션 🥷</div>
-        <div style="display:flex;gap:6px;">
-          <button class="edit-btn" onclick="openSettings()">👤</button>
-          <button class="edit-btn" onclick="openEdit()">⚙ 편집</button>
+      <div class="card figureBox">
+        <div class="figureTitle">가운데 조립</div>
+        <div class="floatZone" id="floatZone"></div>
+        <div class="figureStage" aria-label="피규어 조립 영역">
+          <div class="part head" id="part-head">
+            <div class="hair"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div>
+          </div>
+          <div class="part body" id="part-body"><div class="badge">GO!</div></div>
+          <div class="part legs" id="part-legs"><div class="leg left"></div><div class="leg right"></div></div>
         </div>
-      </div>
-      <div class="hdr-row2">
-        <span class="power-lbl">⚡</span>
-        <div class="power-bar-wrap"><div class="power-bar-fill" id="powerFill" style="width:0%"></div></div>
-        <span class="power-count" id="powerCount">0/0</span>
-      </div>
-      <div class="pts-row">
-        <div class="pts-chip gold">
-          <div class="pts-lbl">🏆 누적 전투력</div>
-          <div class="pts-val" id="totalPtsEl">0</div>
-          <div class="pts-sub">포인트</div>
-        </div>
-        <div class="pts-chip cyan">
-          <div class="pts-lbl">🎁 다음 보상</div>
-          <div class="pts-val cyan" id="rewardLeftEl">50</div>
-          <div class="pts-sub">포인트 남음</div>
-          <div class="reward-bar"><div class="reward-fill" id="rewardFill" style="width:0%"></div></div>
-        </div>
+        <div class="brickCount" id="brickCount">획득 블럭 0개</div>
       </div>
     </div>
-  </div>
 
-  <div class="mission-area" id="missionArea">
-    <div class="section-row">
-      <span class="section-txt" id="sectionLbl">⚔ 오늘의 미션</span>
-      <div class="section-line"></div>
-    </div>
-    <div class="done-strip" id="doneStrip"></div>
-    <div class="split-row">
-      <div class="cards-col">
-        <div class="cards-wrap" id="cardsWrap"></div>
-        <div class="remaining-hint" id="remainHint"></div>
-      </div>
-      <div class="sidebar-col">
-        <div class="sidebar-label">목록</div>
-        <div class="sidebar-list" id="sidebarList"></div>
-        <div class="lego-wrap" id="legoMiniWrap">
-          <div class="lego-label" id="legoName">FIGURE</div>
-          <svg class="lego-svg-mini" id="legoMiniSvg" viewBox="0 0 60 100"></svg>
-          <div class="lego-progress" id="legoProgress">0/10</div>
-        </div>
-      </div>
+    <div class="card" style="margin-top:12px">
+      <div class="sectionTitle">인증샷 보관함</div>
+      <div class="gallery" id="gallery"></div>
+      <div class="small" style="margin-top:8px">같은 브라우저에서 다시 열어도 남아 있어.</div>
     </div>
   </div>
 </div>
 
-<!-- EDIT PANEL -->
-<div class="edit-panel" id="editPanel">
-  <div class="edit-header">
-    <div class="edit-title">⚙ 미션 편집</div>
-    <div style="display:flex;gap:8px;">
-      <button class="edit-cancel" onclick="closeEdit(false)">✕ 취소</button>
-      <button class="edit-close" onclick="closeEdit(true)">✓ 완료</button>
+<div class="fab">
+  <button type="button" id="voiceBtn">🔊 음성</button>
+  <button type="button" id="cameraBtn">📷 인증샷</button>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="editSheet">
+  <div class="sectionTitle">미션 편집</div>
+  <div class="small" style="margin-bottom:10px">미션 이름을 바꾸거나 추가할 수 있어.</div>
+  <div id="editList"></div>
+  <div class="sheetRow" style="margin-top:6px">
+    <input id="newMissionName" placeholder="새 미션 이름" maxlength="20" />
+    <button class="iconbtn" type="button" id="addMissionBtn">추가</button>
+  </div>
+  <div class="actions">
+    <button class="btn gray" type="button" id="closeEditBtn">닫기</button>
+    <button class="btn primary" type="button" id="saveEditBtn">저장</button>
+  </div>
+</div>
+
+<div class="sheet" id="cameraSheet">
+  <div class="sectionTitle">인증샷 찍기</div>
+  <div class="small" style="margin-bottom:10px">카메라가 안 되면 아래 파일 선택으로도 저장할 수 있어.</div>
+  <div class="cameraWrap" id="cameraWrap">
+    <video id="video" autoplay playsinline muted></video>
+    <div class="actions" style="width:100%">
+      <button class="btn gray" type="button" id="closeCameraBtn">닫기</button>
+      <button class="btn primary" type="button" id="snapBtn">촬영</button>
     </div>
   </div>
-  <div class="edit-body" id="editBody"></div>
-  <div class="add-mission-row">
-    <input class="add-mission-input" id="newMissionInput" placeholder="새 미션 입력..." maxlength="16">
-    <button class="add-mission-btn" onclick="addMission()">+ 추가</button>
-  </div>
+  <input type="file" accept="image/*" capture="user" id="filePick" />
+  <canvas id="canvas" style="display:none"></canvas>
 </div>
-
-<!-- EMOJI PICKER -->
-<div class="emoji-picker" id="emojiPicker"></div>
-
-<!-- COMPLETE -->
-<div class="complete-screen" id="completeScreen">
-  <div class="c-grid"></div>
-  <div class="c-inner">
-    <div class="c-badge">▶ 미션 클리어</div>
-    <div class="c-title">임무 완료!</div>
-    <div class="lego-complete-wrap">
-      <svg class="lego-svg-big" id="legoBigSvg" viewBox="0 0 60 100"></svg>
-      <div class="lego-complete-name" id="legoCompleteName"></div>
-    </div>
-    <div class="c-sub" id="cMsg"></div>
-    <div class="c-time" id="cTime"></div>
-    <button class="c-btn1" onclick="openCamera()">📷 전사 인증샷 찍기!</button>
-    <button class="c-btn2" onclick="resetAll()">↺ 미션 재시작</button>
-  </div>
-</div>
-
-<!-- CAMERA -->
-<div class="cam-wrap" id="camWrap">
-  <video id="camVideo" autoplay playsinline></video>
-  <canvas id="photoCanvas"></canvas>
-  <div class="cam-ctrls">
-    <button class="cam-cancel" onclick="closeCamera()">✕</button>
-    <button class="shutter" onclick="takePhoto()">📷</button>
-  </div>
-</div>
-<div class="photo-result" id="photoResult">
-  <img id="resultImg" src="" alt="">
-  <div class="photo-praise">오늘도 최강 닌자! ⚡</div>
-  <div class="photo-btns">
-    <button class="photo-save" onclick="savePhoto()">💾 저장</button>
-    <button class="photo-close" onclick="closePhoto()">닫기</button>
-  </div>
-</div>
-
-<div class="overlay-bg" id="overlayBg"></div>
-<div class="confetti" id="confettiLayer"></div>
-<div class="burst-layer" id="burstLayer"></div>
 
 <script>
-// ── DEFAULT MISSIONS ──
-const DEFAULT_TASKS = [
-  {id:1,name:'옷 입기',emoji:'🥋',hasOutfit:true,points:5},
-  {id:2,name:'세수하기',emoji:'💦',points:5},
-  {id:3,name:'물 양치',emoji:'🦷',points:5},
-  {id:4,name:'아침밥 먹기',emoji:'⚡',points:8},
-  {id:5,name:'머리하기',emoji:'✂️',points:5},
-  {id:6,name:'준비물 챙기기',emoji:'🎒',points:8},
-  {id:7,name:'양치하기',emoji:'🪥',points:5},
-  {id:8,name:'로션 바르기',emoji:'🛡️',points:3},
-  {id:9,name:'양말 신기',emoji:'🧦',points:3},
-  {id:10,name:'니아한테 인사하기',emoji:'🐾',points:5},
-];
+(() => {
+  const DEFAULT = [
+    {id:1,name:'옷 입기',emoji:'🥋'},
+    {id:2,name:'세수하기',emoji:'💦'},
+    {id:3,name:'양치하기',emoji:'🪥'},
+    {id:4,name:'아침밥 먹기',emoji:'🍚'},
+    {id:5,name:'책 읽기',emoji:'📚'},
+    {id:6,name:'가방 챙기기',emoji:'🎒'}
+  ];
 
-const EMOJI_CATS = [
-  {label:'아침루틴', items:['🥋','💦','🦷','🪥','✂️','🎒','🧦','🛡️','🧴','👟','🍚','🥛','🍳','🌅','🛁','🚿']},
-  {label:'닌자/전투', items:['🥷','⚔️','🗡️','🏹','💥','🔥','⚡','🌪️','💫','🌊','🔮','☄️','🥊','🤺','🛡️','🎯']},
-  {label:'로봇/레고', items:['🤖','🧱','🔧','🔩','⚙️','🦾','🦿','🧲','💡','🔬','🔭','🖥️','🕹️','🎮','🚀','🛸']},
-  {label:'동물/자연', items:['🐾','🦁','🐯','🦊','🐺','🦅','🐉','🦋','🐸','🦖','🦕','🐬','🦈','🐙','🦂','🦎']},
-  {label:'스포츠/활동', items:['🏆','🥇','🏅','🎖️','⚽','🏀','🎾','🏊','🚴','🧗','🤼','🥋','🎿','🏄','🏋️','🤸']},
-  {label:'기타', items:['⭐','🌟','💫','✨','🎉','🎁','🎈','🌈','🍀','💎','👑','🗝️','🔑','📚','🎵','❤️']},
-];
-const EMOJIS = EMOJI_CATS.flatMap(c=>c.items);
-
-const PRAISES = [
-  {e:'🧱',t:"You're crushing it!",s:'레고 블록 하나 추가!'},
-  {e:'⚡',t:'Level up, ninja!',s:'전투력 충전 완료!'},
-  {e:'🏆',t:'Awesome job!',s:'최강 전사 인증!'},
-  {e:'🤖',t:'Robot mode: ON!',s:'시스템 업그레이드!'},
-  {e:'💥',t:'Boom! Nailed it!',s:'필살기 발동!'},
-  {e:'🥷',t:'Shadow ninja speed!',s:'그림자 닌자 레벨업!'},
-  {e:'🌟',t:"You're a LEGEND!",s:'전설 등극!'},
-  {e:'🧱',t:'Block by block, hero!',s:'완벽 조립 완료!'},
-  {e:'🔥',t:"That's on fire!",s:'에너지 MAX!'},
-  {e:'⚔️',t:'Mission accepted!',s:'닌자 기술 시전!'},
-  {e:'🚀',t:'To the moon!',s:'로켓 발사!'},
-  {e:'💪',t:'Strong like a warrior!',s:'전사의 힘!'},
-  {e:'🎯',t:'Right on target!',s:'정확한 타격!'},
-  {e:'🦁',t:'Roar! Like a lion!',s:'사자의 용기!'},
-  {e:'🛡️',t:'Shield activated!',s:'방어막 완성!'},
-  {e:'🧱',t:'LEGO master move!',s:'레고 마스터!'},
-  {e:'⭐',t:'Superstar moment!',s:'슈퍼스타 등장!'},
-  {e:'🎮',t:'High score unlocked!',s:'최고 점수!'},
-  {e:'🔧',t:'System upgraded!',s:'업그레이드 완료!'},
-  {e:'🥷',t:'Ninja never quits!',s:'닌자는 포기 안 해!'},
-];
-const REWARD_GOAL = 50;
-
-// ── TASK → ENGLISH NAME MAP ──
-const TASK_EN = {
-  '옷 입기':'Getting dressed','세수하기':'Washing face','물 양치':'Mouth rinse',
-  '아침밥 먹기':'Eating breakfast','머리하기':'Fixing hair','준비물 챙기기':'Packing bag',
-  '양치하기':'Brushing teeth','로션 바르기':'Applying lotion','양말 신기':'Putting on socks',
-  '니아한테 인사하기':'Saying hi to Nia',
-};
-
-// ── 20 LEGO FIGURES (your design) ──
-// Each figure = array of SVG layer strings drawn at 0,0 in 60x110 viewbox
-// Parts: [head, torso, legs] — shown progressively
-function legoFigure(id){
-  const F = LEGO_FIGURES[id % LEGO_FIGURES.length];
-  return F;
-}
-
-const LEGO_FIGURES = [
-  // 0: CLASSIC SMILE
-  {name:'Classic Smile', parts:[
-    // head+face
-    `<rect x="15" y="2" width="30" height="26" rx="4" fill="#FFD700" stroke="#CC9900" stroke-width="1"/>
-     <circle cx="23" cy="12" r="3" fill="#CC7700"/>
-     <circle cx="37" cy="12" r="3" fill="#CC7700"/>
-     <path d="M22 20 Q30 26 38 20" stroke="#CC7700" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-     <rect x="15" y="26" width="30" height="4" rx="0" fill="#DDDDDD"/>`,
-    // torso
-    `<rect x="10" y="30" width="40" height="34" rx="2" fill="#CC0000" stroke="#AA0000" stroke-width="1"/>
-     <rect x="18" y="36" width="24" height="22" rx="1" fill="#AA0000"/>
-     <rect x="2" y="30" width="10" height="28" rx="2" fill="#CC0000"/>
-     <rect x="48" y="30" width="10" height="28" rx="2" fill="#CC0000"/>
-     <rect x="3" y="57" width="9" height="8" rx="2" fill="#FFD700"/>
-     <rect x="48" y="57" width="9" height="8" rx="2" fill="#FFD700"/>`,
-    // legs
-    `<rect x="12" y="64" width="16" height="30" rx="2" fill="#2244AA"/>
-     <rect x="32" y="64" width="16" height="30" rx="2" fill="#2244AA"/>
-     <rect x="10" y="91" width="20" height="8" rx="3" fill="#1133AA"/>
-     <rect x="30" y="91" width="20" height="8" rx="3" fill="#1133AA"/>`
-  ]},
-  // 1: ASTRONAUT
-  {name:'Astronaut', parts:[
-    `<rect x="12" y="2" width="36" height="28" rx="5" fill="#E8E8E8" stroke="#CCC" stroke-width="1"/>
-     <rect x="14" y="6" width="32" height="20" rx="3" fill="#AACCFF"/>
-     <rect x="17" y="9" width="14" height="10" rx="1" fill="#DDEEFF"/>
-     <rect x="17" y="9" width="5" height="3" rx="1" fill="rgba(255,255,255,0.7)"/>
-     <rect x="12" y="28" width="36" height="4" fill="#DDD"/>`,
-    `<rect x="8" y="32" width="44" height="34" rx="2" fill="#EEEEEE" stroke="#CCC" stroke-width="1"/>
-     <rect x="14" y="36" width="32" height="26" rx="2" fill="#CCDDEE"/>
-     <rect x="18" y="40" width="10" height="8" rx="1" fill="#CC2200"/>
-     <rect x="30" y="40" width="8" height="6" rx="1" fill="#AACCEE"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#E8E8E8"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#E8E8E8"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#DDD"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#DDD"/>`,
-    `<rect x="12" y="66" width="16" height="28" rx="2" fill="#DDDDEE"/>
-     <rect x="32" y="66" width="16" height="28" rx="2" fill="#CCCCDD"/>
-     <rect x="10" y="90" width="20" height="8" rx="3" fill="#CCCCCC"/>
-     <rect x="30" y="90" width="20" height="8" rx="3" fill="#CCCCCC"/>`
-  ]},
-  // 2: DEEP SEA DIVER
-  {name:'Deep Sea Diver', parts:[
-    `<rect x="10" y="0" width="40" height="34" rx="8" fill="#AA6600" stroke="#885500" stroke-width="1.5"/>
-     <circle cx="30" cy="14" r="12" fill="#224488"/>
-     <circle cx="30" cy="14" r="9" fill="#3366AA"/>
-     <circle cx="30" cy="14" r="6" fill="#88AACC" opacity="0.7"/>
-     <circle cx="26" cy="11" r="2" fill="rgba(255,255,255,0.5)"/>
-     <rect x="18" y="0" width="24" height="5" rx="2" fill="#885500"/>
-     <circle cx="46" cy="8" r="5" fill="#888" stroke="#666" stroke-width="1"/>
-     <rect x="10" y="32" width="40" height="4" fill="#885500"/>`,
-    `<rect x="8" y="36" width="44" height="32" rx="2" fill="#DD8800" stroke="#BB7700" stroke-width="1"/>
-     <rect x="14" y="40" width="32" height="24" rx="1" fill="#BB7700"/>
-     <rect x="18" y="44" width="10" height="8" rx="1" fill="#888"/>
-     <rect x="30" y="44" width="8" height="6" rx="1" fill="#666"/>
-     <rect x="0" y="36" width="10" height="26" rx="2" fill="#CC8800"/>
-     <rect x="50" y="36" width="10" height="26" rx="2" fill="#CC8800"/>
-     <rect x="1" y="60" width="9" height="8" rx="2" fill="#CC9944"/>
-     <rect x="50" y="60" width="9" height="8" rx="2" fill="#CC9944"/>`,
-    `<rect x="12" y="68" width="16" height="28" rx="2" fill="#DD8800"/>
-     <rect x="32" y="68" width="16" height="28" rx="2" fill="#BB7700"/>
-     <rect x="10" y="92" width="20" height="8" rx="3" fill="#CC7700"/>
-     <rect x="30" y="92" width="20" height="8" rx="3" fill="#CC7700"/>`
-  ]},
-  // 3: PIRATE CAPTAIN
-  {name:'Pirate Captain', parts:[
-    `<rect x="14" y="4" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="8" y="-2" width="44" height="8" rx="2" fill="#1a1a1a"/>
-     <rect x="12" y="-10" width="36" height="10" rx="2" fill="#111"/>
-     <rect x="20" y="-12" width="10" height="5" rx="1" fill="white"/>
-     <circle cx="25" cy="-10" r="3" fill="#111"/>
-     <rect x="14" y="-2" width="32" height="3" fill="#333"/>
-     <rect x="10" y="10" width="9" height="7" rx="1" fill="#111"/>
-     <rect x="10" y="10" width="9" height="2" fill="#666"/>
-     <rect x="25" y="10" width="6" height="6" rx="1" fill="#FFDD00"/>
-     <rect x="16" y="20" width="22" height="6" rx="2" fill="#884400" opacity="0.7"/>
-     <rect x="14" y="28" width="32" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#553300" stroke="#442200" stroke-width="1"/>
-     <rect x="8" y="34" width="44" height="5" fill="#3a5c2a"/>
-     <rect x="8" y="42" width="44" height="5" fill="#3a5c2a"/>
-     <rect x="8" y="50" width="44" height="5" fill="#3a5c2a"/>
-     <rect x="14" y="60" width="32" height="4" fill="#4a2a00"/>
-     <rect x="22" y="58" width="16" height="8" rx="1" fill="#FFD700"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#553300"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#553300"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="52" y="54" width="2" height="10" rx="1" fill="#CCC"/>
-     <path d="M53 64 Q60 67 60 60" stroke="#CCC" stroke-width="2" fill="none"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#553300"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#3a2200"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#111"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#111"/>`
-  ]},
-  // 4: MEDIEVAL KNIGHT
-  {name:'Medieval Knight', parts:[
-    `<rect x="12" y="0" width="36" height="30" rx="2" fill="#999" stroke="#777" stroke-width="1"/>
-     <rect x="14" y="4" width="32" height="22" rx="1" fill="#888"/>
-     <rect x="16" y="8" width="10" height="7" rx="1" fill="#333"/>
-     <rect x="28" y="8" width="10" height="7" rx="1" fill="#333"/>
-     <rect x="14" y="17" width="32" height="3" fill="#777"/>
-     <rect x="14" y="21" width="32" height="3" fill="#777"/>
-     <rect x="18" y="-6" width="24" height="8" rx="1" fill="#CC0000"/>
-     <ellipse cx="30" cy="-6" rx="5" ry="4" fill="#EE1100"/>
-     <rect x="12" y="28" width="36" height="4" fill="#888"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#888" stroke="#777" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="26" rx="1" fill="#999"/>
-     <rect x="14" y="38" width="32" height="5" fill="#AAA"/>
-     <rect x="14" y="45" width="32" height="5" fill="#AAA"/>
-     <rect x="20" y="38" width="20" height="22" rx="1" fill="#CC0000"/>
-     <rect x="26" y="38" width="8" height="22" rx="1" fill="#BB0000"/>
-     <rect x="20" y="46" width="20" height="6" rx="1" fill="#BB0000"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#888"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#888"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="-12" y="34" width="14" height="20" rx="2" fill="#CC0000"/>
-     <rect x="-11" y="35" width="12" height="18" rx="1" fill="#EE1100"/>
-     <rect x="-8" y="40" width="8" height="7" rx="1" fill="#FFD700"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#888"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#999"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#777"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#888"/>`
-  ]},
-  // 5: CYBERPUNK HACKER
-  {name:'Cyberpunk Hacker', parts:[
-    `<rect x="14" y="2" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="14" y="2" width="32" height="26" rx="3" fill="#111" opacity="0.85"/>
-     <rect x="12" y="6" width="36" height="14" rx="2" fill="#222"/>
-     <rect x="14" y="8" width="14" height="8" rx="2" fill="#00FF88"/>
-     <rect x="30" y="8" width="14" height="8" rx="2" fill="#00FF88"/>
-     <rect x="14" y="8" width="5" height="3" rx="1" fill="rgba(255,255,255,0.4)"/>
-     <rect x="30" y="8" width="5" height="3" rx="1" fill="rgba(255,255,255,0.4)"/>
-     <rect x="16" y="19" width="28" height="4" rx="1" fill="#333"/>
-     <rect x="18" y="20" width="4" height="2" fill="#FF00AA"/>
-     <rect x="24" y="20" width="4" height="2" fill="#00FF88"/>
-     <rect x="30" y="20" width="4" height="2" fill="#FF00AA"/>
-     <rect x="20" y="-6" width="10" height="10" rx="2" fill="#333"/>
-     <rect x="14" y="27" width="32" height="4" fill="#111"/>`,
-    `<rect x="8" y="31" width="44" height="32" rx="2" fill="#111" stroke="#333" stroke-width="1"/>
-     <rect x="12" y="35" width="36" height="24" rx="1" fill="#1a1a1a"/>
-     <rect x="12" y="35" width="15" height="24" rx="1" fill="#FF00AA" opacity="0.12"/>
-     <rect x="33" y="35" width="15" height="24" rx="1" fill="#00FF88" opacity="0.1"/>
-     <rect x="14" y="38" width="20" height="1" fill="#FF00AA" opacity="0.8"/>
-     <rect x="14" y="42" width="14" height="1" fill="#00FF88" opacity="0.8"/>
-     <rect x="14" y="46" width="22" height="1" fill="#FF00AA" opacity="0.8"/>
-     <rect x="14" y="50" width="16" height="1" fill="#00FF88" opacity="0.8"/>
-     <rect x="0" y="31" width="10" height="26" rx="2" fill="#111"/>
-     <rect x="50" y="31" width="10" height="26" rx="2" fill="#111"/>
-     <rect x="1" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <ellipse cx="10" cy="33" rx="5" ry="3" fill="#FF00AA"/>
-     <ellipse cx="50" cy="33" rx="5" ry="3" fill="#00FF88"/>`,
-    `<rect x="12" y="63" width="16" height="28" rx="2" fill="#111"/>
-     <rect x="32" y="63" width="16" height="28" rx="2" fill="#1a1a1a"/>
-     <rect x="10" y="87" width="20" height="8" rx="3" fill="#FF00AA" opacity="0.9"/>
-     <rect x="30" y="87" width="20" height="8" rx="3" fill="#00FF88" opacity="0.9"/>`
-  ]},
-  // 6: THREE-ARMED ROBOT
-  {name:'Three-Armed Robot', parts:[
-    `<rect x="10" y="2" width="40" height="26" rx="3" fill="#888" stroke="#666" stroke-width="1"/>
-     <rect x="12" y="4" width="36" height="20" rx="2" fill="#777"/>
-     <rect x="14" y="7" width="7" height="6" rx="1" fill="#00FFAA"/>
-     <rect x="23" y="7" width="7" height="6" rx="1" fill="#00FFAA"/>
-     <rect x="32" y="7" width="7" height="6" rx="1" fill="#FF4400"/>
-     <rect x="14" y="16" width="30" height="5" rx="1" fill="#555"/>
-     <rect x="16" y="17" width="4" height="3" fill="#00FFAA"/>
-     <rect x="22" y="17" width="4" height="3" fill="#00FFAA"/>
-     <rect x="28" y="17" width="4" height="3" fill="#00FFAA"/>
-     <rect x="34" y="17" width="4" height="3" fill="#FF4400"/>
-     <rect x="15" y="-4" width="3" height="7" fill="#888"/>
-     <circle cx="16" cy="-4" r="2.5" fill="#FF4400"/>
-     <rect x="28" y="-2" width="3" height="5" fill="#888"/>
-     <circle cx="29" cy="-2" r="2" fill="#00FFAA"/>
-     <rect x="10" y="26" width="40" height="4" fill="#777"/>`,
-    `<rect x="6" y="30" width="48" height="32" rx="2" fill="#666" stroke="#555" stroke-width="1"/>
-     <rect x="10" y="34" width="40" height="24" rx="1" fill="#555"/>
-     <rect x="12" y="36" width="14" height="10" rx="1" fill="#444"/>
-     <rect x="28" y="36" width="14" height="10" rx="1" fill="#444"/>
-     <rect x="14" y="38" width="4" height="4" rx="0" fill="#00FFAA"/>
-     <rect x="20" y="38" width="4" height="4" rx="0" fill="#00FFAA"/>
-     <rect x="30" y="38" width="4" height="4" rx="0" fill="#FF4400"/>
-     <rect x="36" y="38" width="4" height="4" rx="0" fill="#00FFAA"/>
-     <rect x="12" y="48" width="36" height="6" rx="1" fill="#444"/>
-     <circle cx="16" cy="51" r="2" fill="#00FFAA"/>
-     <circle cx="22" cy="51" r="2" fill="#FF4400"/>
-     <circle cx="28" cy="51" r="2" fill="#00FFAA"/>
-     <rect x="-2" y="30" width="10" height="24" rx="2" fill="#777"/>
-     <rect x="52" y="30" width="10" height="24" rx="2" fill="#777"/>
-     <rect x="62" y="26" width="10" height="20" rx="2" fill="#888"/>
-     <rect x="-2" y="53" width="9" height="8" rx="2" fill="#999"/>
-     <rect x="52" y="53" width="9" height="8" rx="2" fill="#999"/>
-     <rect x="62" y="44" width="9" height="8" rx="2" fill="#AAA"/>`,
-    `<rect x="12" y="62" width="16" height="28" rx="2" fill="#666"/>
-     <rect x="32" y="62" width="16" height="28" rx="2" fill="#777"/>
-     <rect x="10" y="86" width="20" height="8" rx="3" fill="#555"/>
-     <rect x="30" y="86" width="20" height="8" rx="3" fill="#666"/>`
-  ]},
-  // 7: FOREST EXPLORER
-  {name:'Forest Explorer', parts:[
-    `<rect x="14" y="2" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="8" y="-4" width="44" height="8" rx="2" fill="#8B6914"/>
-     <rect x="12" y="-10" width="36" height="8" rx="2" fill="#A07830"/>
-     <rect x="14" y="-12" width="32" height="4" rx="2" fill="#8B6914"/>
-     <rect x="16" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="25" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="16" y="16" width="14" height="5" rx="2" fill="#8B6914"/>
-     <rect x="14" y="27" width="32" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="31" width="44" height="32" rx="2" fill="#8B6914" stroke="#7A5C10" stroke-width="1"/>
-     <rect x="12" y="35" width="36" height="24" rx="1" fill="#A07830"/>
-     <rect x="14" y="37" width="15" height="20" rx="1" fill="#8B6914"/>
-     <rect x="31" y="37" width="15" height="20" rx="1" fill="#8B6914"/>
-     <rect x="15" y="42" width="12" height="9" rx="1" fill="#6B4E1A" stroke="#8B6914" stroke-width="0.5"/>
-     <rect x="31" y="42" width="12" height="9" rx="1" fill="#6B4E1A" stroke="#8B6914" stroke-width="0.5"/>
-     <rect x="0" y="31" width="10" height="26" rx="2" fill="#8B6914"/>
-     <rect x="50" y="31" width="10" height="26" rx="2" fill="#8B6914"/>
-     <rect x="1" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="42" width="14" height="10" rx="2" fill="#444"/>
-     <circle cx="54" cy="47" r="3.5" fill="#222"/>
-     <circle cx="61" cy="47" r="3.5" fill="#222"/>`,
-    `<rect x="12" y="63" width="16" height="28" rx="2" fill="#8B6914"/>
-     <rect x="32" y="63" width="16" height="28" rx="2" fill="#A07830"/>
-     <rect x="10" y="87" width="20" height="8" rx="3" fill="#6B4E1A"/>
-     <rect x="30" y="87" width="20" height="8" rx="3" fill="#8B6914"/>`
-  ]},
-  // 8: RETRO CHEF
-  {name:'Retro Chef', parts:[
-    `<rect x="14" y="4" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="12" y="-8" width="36" height="14" rx="6" fill="#EEEEEE" stroke="#DDD" stroke-width="1"/>
-     <rect x="14" y="-2" width="32" height="6" rx="0" fill="#EEEEEE"/>
-     <rect x="16" y="10" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="27" y="10" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="14" y="16" width="32" height="5" rx="0" fill="#8B6914" opacity="0.5"/>
-     <rect x="20" y="20" width="5" height="8" rx="1" fill="#884400" opacity="0.6"/>
-     <rect x="27" y="20" width="5" height="8" rx="1" fill="#884400" opacity="0.6"/>
-     <rect x="14" y="29" width="32" height="3" fill="#FFCC88"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#EEEEEE" stroke="#DDD" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="24" rx="1" fill="#FFFFFF"/>
-     <rect x="24" y="38" width="12" height="18" rx="1" fill="#EEEEEE"/>
-     <rect x="16" y="48" width="10" height="6" rx="1" fill="#888"/>
-     <rect x="34" y="48" width="6" height="6" rx="1" fill="#888"/>
-     <rect x="26" y="40" width="8" height="4" rx="1" fill="#CC0000"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#EEEEEE"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#EEEEEE"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="-8" y="36" width="10" height="3" rx="1" fill="#888"/>
-     <rect x="-10" y="34" width="6" height="7" rx="1" fill="#AAA"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#AAAAAA"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#BBBBBB"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#999"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#AAA"/>`
-  ]},
-  // 9: ARTIST
-  {name:'Artist', parts:[
-    `<rect x="14" y="2" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="12" y="-4" width="36" height="8" rx="2" fill="#886600"/>
-     <rect x="16" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="27" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="16" y="18" width="6" height="4" rx="1" fill="#AA7700" opacity="0.7"/>
-     <rect x="14" y="27" width="32" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="31" width="44" height="32" rx="2" fill="#EEEEEE" stroke="#DDD" stroke-width="1"/>
-     <rect x="12" y="35" width="36" height="24" rx="1" fill="#FFFFFF"/>
-     <circle cx="18" cy="44" r="4" fill="#FF4444" opacity="0.8"/>
-     <circle cx="28" cy="40" r="3" fill="#4444FF" opacity="0.8"/>
-     <circle cx="36" cy="46" r="4" fill="#FFDD00" opacity="0.8"/>
-     <circle cx="22" cy="52" r="3" fill="#44AA44" opacity="0.8"/>
-     <circle cx="38" cy="52" r="2.5" fill="#FF44FF" opacity="0.7"/>
-     <circle cx="14" cy="52" r="2" fill="#FF8800" opacity="0.8"/>
-     <rect x="0" y="31" width="10" height="26" rx="2" fill="#EEEEEE"/>
-     <rect x="50" y="31" width="10" height="26" rx="2" fill="#EEEEEE"/>
-     <rect x="1" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="40" width="3" height="18" rx="1" fill="#8B4513"/>
-     <ellipse cx="51" cy="38" rx="4" ry="3" fill="#FF4444"/>`,
-    `<rect x="12" y="63" width="16" height="28" rx="2" fill="#AAAAAA"/>
-     <rect x="32" y="63" width="16" height="28" rx="2" fill="#888"/>
-     <rect x="10" y="87" width="20" height="8" rx="3" fill="#999"/>
-     <rect x="30" y="87" width="20" height="8" rx="3" fill="#777"/>`
-  ]},
-  // 10: STEAMPUNK INVENTOR (Fire Fighter repurposed)
-  {name:'Steampunk Inventor', parts:[
-    `<rect x="12" y="2" width="36" height="28" rx="3" fill="#CC8800" stroke="#AA6600" stroke-width="1"/>
-     <rect x="10" y="-4" width="40" height="8" rx="2" fill="#AA6600"/>
-     <rect x="14" y="-10" width="32" height="8" rx="2" fill="#CC8800"/>
-     <rect x="16" y="10" width="6" height="5" rx="1" fill="#FFDD00"/>
-     <rect x="26" y="10" width="6" height="5" rx="1" fill="#FFDD00"/>
-     <circle cx="44" cy="6" r="5" fill="#888" stroke="#666" stroke-width="1"/>
-     <circle cx="44" cy="6" r="3" fill="#AAAAAA"/>
-     <rect x="12" y="28" width="36" height="4" fill="#AA6600"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#885500" stroke="#664400" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="24" rx="1" fill="#AA6600"/>
-     <circle cx="24" cy="46" r="6" fill="#888" stroke="#666" stroke-width="1"/>
-     <circle cx="24" cy="46" r="4" fill="#999"/>
-     <circle cx="24" cy="46" r="2" fill="#777"/>
-     <rect x="30" y="40" width="10" height="10" rx="1" fill="#666"/>
-     <rect x="32" y="42" width="6" height="6" rx="0" fill="#888"/>
-     <rect x="12" y="54" width="36" height="4" rx="1" fill="#664400"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#885500"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#885500"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#664400"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#885500"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#553300"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#664400"/>`
-  ]},
-  // 11: FIRE FIGHTER
-  {name:'Fire Fighter', parts:[
-    `<rect x="12" y="2" width="36" height="28" rx="3" fill="#CC2200" stroke="#AA1100" stroke-width="1"/>
-     <rect x="10" y="-4" width="40" height="8" rx="2" fill="#CC2200"/>
-     <rect x="12" y="-12" width="36" height="10" rx="2" fill="#AA1100"/>
-     <rect x="14" y="-14" width="32" height="4" rx="2" fill="#CC2200"/>
-     <rect x="16" y="10" width="6" height="5" rx="1" fill="#FFCC88"/>
-     <rect x="26" y="10" width="6" height="5" rx="1" fill="#FFCC88"/>
-     <rect x="16" y="18" width="28" height="4" rx="1" fill="#FF4400" opacity="0.6"/>
-     <rect x="12" y="28" width="36" height="4" fill="#AA1100"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#CC2200" stroke="#AA1100" stroke-width="1"/>
-     <rect x="8" y="36" width="44" height="5" fill="#FFAA00" opacity="0.5"/>
-     <rect x="8" y="46" width="44" height="5" fill="#FFAA00" opacity="0.5"/>
-     <rect x="8" y="56" width="44" height="5" fill="#FFAA00" opacity="0.5"/>
-     <rect x="18" y="38" width="24" height="20" rx="1" fill="#AA1100"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#CC2200"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#CC2200"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="40" width="12" height="5" rx="1" fill="#884400"/>
-     <rect x="56" y="30" width="4" height="16" rx="1" fill="#884400"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#CC2200"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#AA1100"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#881100"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#CC2200"/>`
-  ]},
-  // 12: FUTURE POLICE
-  {name:'Future Police', parts:[
-    `<rect x="12" y="2" width="36" height="28" rx="3" fill="#334455" stroke="#223344" stroke-width="1"/>
-     <rect x="14" y="6" width="32" height="20" rx="2" fill="#223344"/>
-     <rect x="16" y="8" width="12" height="10" rx="1" fill="#6699CC" opacity="0.8"/>
-     <rect x="16" y="8" width="4" height="3" rx="1" fill="rgba(255,255,255,0.5)"/>
-     <rect x="12" y="28" width="36" height="4" fill="#334455"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#334455" stroke="#223344" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="24" rx="1" fill="#223344"/>
-     <rect x="16" y="40" width="12" height="8" rx="1" fill="#6699CC" opacity="0.6"/>
-     <rect x="30" y="40" width="10" height="6" rx="1" fill="#4466AA" opacity="0.6"/>
-     <rect x="16" y="52" width="28" height="4" rx="1" fill="#3355AA" opacity="0.5"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#334455"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#334455"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="-10" y="36" width="12" height="18" rx="2" fill="#6699CC" opacity="0.7"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#334455"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#223344"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#222"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#333"/>`
-  ]},
-  // 13: MOUNTAIN RESCUE
-  {name:'Mountain Rescue', parts:[
-    `<rect x="12" y="2" width="36" height="28" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="8" y="-2" width="44" height="6" rx="3" fill="#EE8800"/>
-     <rect x="10" y="-10" width="40" height="10" rx="3" fill="#FF9900"/>
-     <rect x="12" y="-12" width="36" height="4" rx="2" fill="#EE8800"/>
-     <rect x="16" y="9" width="6" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="27" y="9" width="6" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="14" y="27" width="32" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="31" width="44" height="34" rx="2" fill="#2244AA" stroke="#1133AA" stroke-width="1"/>
-     <rect x="12" y="35" width="36" height="26" rx="1" fill="#EE8800"/>
-     <rect x="12" y="35" width="36" height="6" rx="1" fill="#2244AA"/>
-     <rect x="20" y="43" width="20" height="14" rx="1" fill="#2244AA" opacity="0.3"/>
-     <rect x="0" y="31" width="10" height="26" rx="2" fill="#2244AA"/>
-     <rect x="50" y="31" width="10" height="26" rx="2" fill="#EE8800"/>
-     <rect x="1" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>`,
-    `<rect x="12" y="65" width="16" height="28" rx="2" fill="#2244AA"/>
-     <rect x="32" y="65" width="16" height="28" rx="2" fill="#EE8800"/>
-     <rect x="10" y="89" width="20" height="8" rx="3" fill="#1133AA"/>
-     <rect x="30" y="89" width="20" height="8" rx="3" fill="#CC7700"/>`
-  ]},
-  // 14: VINTAGE RACER
-  {name:'Vintage Racer', parts:[
-    `<rect x="10" y="2" width="40" height="30" rx="4" fill="#EEEEEE" stroke="#CCC" stroke-width="1"/>
-     <rect x="12" y="6" width="36" height="22" rx="3" fill="#FFFFFF"/>
-     <rect x="16" y="9" width="12" height="10" rx="1" fill="#AACCFF" opacity="0.8"/>
-     <rect x="16" y="9" width="4" height="3" rx="1" fill="rgba(255,255,255,0.7)"/>
-     <rect x="22" y="3" width="8" height="5" fill="#1133BB"/>
-     <rect x="26" y="14" width="10" height="8" rx="1" fill="#1133BB"/>
-     <text x="30" y="21" text-anchor="middle" font-size="7" fill="white" font-family="monospace" font-weight="bold">7</text>
-     <rect x="10" y="30" width="40" height="4" fill="#DDD"/>`,
-    `<rect x="8" y="34" width="44" height="32" rx="2" fill="#FFFFFF" stroke="#DDD" stroke-width="1"/>
-     <rect x="12" y="38" width="36" height="24" rx="1" fill="#EEEEEE"/>
-     <rect x="20" y="40" width="8" height="4" rx="1" fill="#1133BB"/>
-     <rect x="30" y="40" width="8" height="4" rx="1" fill="#1133BB"/>
-     <rect x="20" y="48" width="20" height="10" rx="1" fill="#DDDDDD"/>
-     <rect x="0" y="34" width="10" height="26" rx="2" fill="#EEEEEE"/>
-     <rect x="50" y="34" width="10" height="26" rx="2" fill="#EEEEEE"/>
-     <rect x="1" y="58" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="58" width="9" height="8" rx="2" fill="#FFCC88"/>`,
-    `<rect x="12" y="66" width="16" height="26" rx="2" fill="#CCCCCC"/>
-     <rect x="32" y="66" width="16" height="26" rx="2" fill="#DDDDDD"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#BBBBBB"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#CCCCCC"/>`
-  ]},
-  // 15: GARDENER
-  {name:'Gardener', parts:[
-    `<rect x="14" y="4" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="10" y="-2" width="40" height="8" rx="4" fill="#AA8800"/>
-     <rect x="12" y="-10" width="36" height="10" rx="4" fill="#CCAA00"/>
-     <rect x="16" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="27" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="14" y="27" width="32" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="31" width="44" height="34" rx="2" fill="#4477AA" stroke="#336699" stroke-width="1"/>
-     <rect x="12" y="35" width="36" height="26" rx="1" fill="#5588BB"/>
-     <rect x="12" y="35" width="36" height="8" rx="1" fill="#336699"/>
-     <rect x="0" y="31" width="10" height="26" rx="2" fill="#4477AA"/>
-     <rect x="50" y="31" width="10" height="26" rx="2" fill="#4477AA"/>
-     <rect x="1" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="55" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="52" y="44" width="6" height="12" rx="1" fill="#448844"/>
-     <ellipse cx="55" cy="42" rx="5" ry="4" fill="#228822"/>`,
-    `<rect x="12" y="65" width="16" height="28" rx="2" fill="#336699"/>
-     <rect x="32" y="65" width="16" height="28" rx="2" fill="#4477AA"/>
-     <rect x="10" y="89" width="20" height="8" rx="3" fill="#8B6914"/>
-     <rect x="30" y="89" width="20" height="8" rx="3" fill="#8B6914"/>`
-  ]},
-  // 16: SKIER
-  {name:'Skier', parts:[
-    `<rect x="12" y="2" width="36" height="28" rx="5" fill="#2299CC" stroke="#1177AA" stroke-width="1"/>
-     <rect x="14" y="6" width="32" height="20" rx="4" fill="#1188BB"/>
-     <rect x="16" y="8" width="12" height="10" rx="2" fill="#FF8800"/>
-     <rect x="16" y="8" width="4" height="3" rx="1" fill="rgba(255,255,255,0.5)"/>
-     <rect x="30" y="10" width="10" height="6" rx="1" fill="#FF4499"/>
-     <rect x="12" y="28" width="36" height="4" fill="#1177AA"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#00CCAA" stroke="#00AAAA" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="24" rx="1" fill="#00BBAA"/>
-     <rect x="14" y="38" width="32" height="6" rx="1" fill="#FF4499" opacity="0.6"/>
-     <rect x="14" y="48" width="32" height="6" rx="1" fill="#FF8800" opacity="0.6"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#00CCAA"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#00CCAA"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#EEEEEE"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#EEEEEE"/>
-     <rect x="-6" y="42" width="5" height="18" rx="1" fill="#888"/>
-     <rect x="61" y="42" width="5" height="18" rx="1" fill="#888"/>`,
-    `<rect x="12" y="64" width="16" height="26" rx="2" fill="#00AAAA"/>
-     <rect x="32" y="64" width="16" height="26" rx="2" fill="#00CCAA"/>
-     <rect x="4" y="88" width="32" height="5" rx="2" fill="#EEEEEE"/>
-     <rect x="24" y="88" width="32" height="5" rx="2" fill="#EEEEEE"/>`
-  ]},
-  // 17: LAB DOCTOR
-  {name:'Lab Doctor', parts:[
-    `<rect x="14" y="2" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="8" y="-2" width="44" height="6" rx="2" fill="#DDDDDD"/>
-     <rect x="16" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="27" y="8" width="5" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="22" y="6" width="6" height="2" rx="1" fill="#AAAAFF"/>
-     <rect x="30" y="6" width="6" height="2" rx="1" fill="#AAAAFF"/>
-     <rect x="14" y="27" width="32" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="31" width="44" height="34" rx="2" fill="#FFFFFF" stroke="#EEE" stroke-width="1"/>
-     <rect x="12" y="35" width="36" height="26" rx="1" fill="#FFFFFF"/>
-     <rect x="12" y="35" width="36" height="4" rx="1" fill="#AAAAFF" opacity="0.4"/>
-     <rect x="16" y="44" width="14" height="6" rx="1" fill="#EEEEEE" stroke="#DDD" stroke-width="0.5"/>
-     <rect x="32" y="44" width="10" height="6" rx="1" fill="#EEEEEE" stroke="#DDD" stroke-width="0.5"/>
-     <text x="30" y="58" text-anchor="middle" font-size="6" fill="#4444CC" font-family="monospace">Rx ✓</text>
-     <rect x="0" y="31" width="10" height="28" rx="2" fill="#FFFFFF" stroke="#EEE" stroke-width="1"/>
-     <rect x="50" y="31" width="10" height="28" rx="2" fill="#FFFFFF" stroke="#EEE" stroke-width="1"/>
-     <rect x="1" y="57" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="57" width="9" height="8" rx="2" fill="#FFCC88"/>`,
-    `<rect x="12" y="65" width="16" height="28" rx="2" fill="#CCCCCC"/>
-     <rect x="32" y="65" width="16" height="28" rx="2" fill="#DDDDDD"/>
-     <rect x="10" y="89" width="20" height="8" rx="3" fill="#BBBBBB"/>
-     <rect x="30" y="89" width="20" height="8" rx="3" fill="#CCCCCC"/>`
-  ]},
-  // 18: HEAVY METAL GUITARIST
-  {name:'Heavy Metal Guitarist', parts:[
-    `<rect x="14" y="4" width="32" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="14" y="4" width="32" height="26" rx="3" fill="#111" opacity="0.7"/>
-     <rect x="18" y="-12" width="24" height="18" rx="2" fill="#111"/>
-     <rect x="16" y="-14" width="28" height="5" rx="2" fill="#222"/>
-     <rect x="14" y="4" width="6" height="26" rx="0" fill="#111" opacity="0.5"/>
-     <rect x="16" y="10" width="6" height="5" rx="1" fill="#FF4444"/>
-     <rect x="27" y="10" width="6" height="5" rx="1" fill="#FF4444"/>
-     <rect x="18" y="18" width="6" height="4" rx="1" fill="#888" opacity="0.6"/>
-     <rect x="14" y="29" width="32" height="3" fill="#111"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#111" stroke="#333" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="24" rx="1" fill="#1a1a1a"/>
-     <rect x="22" y="38" width="5" height="20" rx="1" fill="#CC0000"/>
-     <text x="30" y="48" text-anchor="middle" font-size="8" fill="#FF4444" font-family="monospace">★</text>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#111"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#111"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="42" width="18" height="8" rx="2" fill="#333"/>
-     <rect x="52" y="44" width="4" height="4" rx="0" fill="#888"/>
-     <rect x="58" y="44" width="4" height="4" rx="0" fill="#888"/>
-     <rect x="54" y="38" width="2" height="8" rx="1" fill="#888"/>
-     <rect x="60" y="38" width="2" height="6" rx="1" fill="#888"/>`,
-    `<rect x="12" y="64" width="16" height="28" rx="2" fill="#111"/>
-     <rect x="32" y="64" width="16" height="28" rx="2" fill="#1a1a1a"/>
-     <rect x="10" y="88" width="20" height="8" rx="3" fill="#222"/>
-     <rect x="30" y="88" width="20" height="8" rx="3" fill="#111"/>`
-  ]},
-  // 19: VIKING WARRIOR
-  {name:'Viking Warrior', parts:[
-    `<rect x="12" y="4" width="36" height="26" rx="3" fill="#FFCC88" stroke="#DDAA66" stroke-width="1"/>
-     <rect x="8" y="-2" width="44" height="8" rx="2" fill="#888"/>
-     <rect x="10" y="-12" width="40" height="12" rx="3" fill="#999"/>
-     <rect x="6" y="-4" width="8" height="16" rx="2" fill="#888"/>
-     <rect x="46" y="-4" width="8" height="16" rx="2" fill="#888"/>
-     <rect x="16" y="10" width="6" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="28" y="10" width="6" height="5" rx="1" fill="#5C4A1E"/>
-     <rect x="14" y="18" width="32" height="6" rx="2" fill="#8B4513" opacity="0.7"/>
-     <rect x="12" y="28" width="36" height="4" fill="#FFCC88"/>`,
-    `<rect x="8" y="32" width="44" height="32" rx="2" fill="#885500" stroke="#664400" stroke-width="1"/>
-     <rect x="12" y="36" width="36" height="24" rx="1" fill="#AA6600"/>
-     <rect x="14" y="38" width="32" height="5" fill="#999" opacity="0.4"/>
-     <rect x="14" y="45" width="32" height="5" fill="#999" opacity="0.4"/>
-     <rect x="14" y="52" width="32" height="4" fill="#999" opacity="0.4"/>
-     <rect x="0" y="32" width="10" height="26" rx="2" fill="#885500"/>
-     <rect x="50" y="32" width="10" height="26" rx="2" fill="#885500"/>
-     <rect x="1" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="50" y="56" width="9" height="8" rx="2" fill="#FFCC88"/>
-     <rect x="-14" y="28" width="16" height="28" rx="2" fill="#888"/>
-     <rect x="-12" y="30" width="12" height="24" rx="1" fill="#999"/>
-     <rect x="-10" y="36" width="8" height="8" rx="1" fill="#CC9900"/>
-     <rect x="52" y="28" width="4" height="32" rx="1" fill="#888"/>
-     <rect x="52" y="26" width="14" height="6" rx="1" fill="#777"/>`,
-    `<rect x="12" y="64" width="16" height="26" rx="2" fill="#664400"/>
-     <rect x="32" y="64" width="16" height="26" rx="2" fill="#885500"/>
-     <rect x="8" y="87" width="24" height="8" rx="3" fill="#553300"/>
-     <rect x="28" y="87" width="24" height="8" rx="3" fill="#664400"/>`
-  ]},
-];
-
-// ── STATE ──
-function loadTasks(){
-  try{
-    const s=localStorage.getItem('ninjaTasks');
-    if(s) return JSON.parse(s);
-  }catch(e){}
-  return JSON.parse(JSON.stringify(DEFAULT_TASKS));
-}
-function loadTitle(){
-  return localStorage.getItem('ninjaTitle') || '닌자 아침 미션 🥷';
-}
-function saveTitle(t){ localStorage.setItem('ninjaTitle', t); }
-function loadName(){ return localStorage.getItem('ninjaName') || ''; }
-function saveName(n){ localStorage.setItem('ninjaName', n); }
-function loadVoice(){ return localStorage.getItem('ninjaVoice') !== 'off'; }
-function saveVoice(v){ localStorage.setItem('ninjaVoice', v ? 'on' : 'off'); }
-function saveTasks(){ localStorage.setItem('ninjaTasks',JSON.stringify(state.tasks)); }
-
-let state = {
-  tasks: loadTasks(),
-  done: {},
-  times: {},
-  totalPoints: parseInt(localStorage.getItem('ninjaPoints')||'0'),
-  outfitChoice: null,
-  appTitle: loadTitle(),
-  userName: loadName(),
-  voiceEnabled: loadVoice(),
-  figureIdx: parseInt(localStorage.getItem('ninjaFigIdx')||Math.floor(Math.random()*20)),
-};
-
-// ── CLOCK ──
-function krNow(){ return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'})); }
-function updateClock(){
-  const t=krNow();
-  document.getElementById('clockEl').textContent=pad(t.getHours())+':'+pad(t.getMinutes());
-  document.getElementById('dateEl').textContent=['일','월','화','수','목','금','토'][t.getDay()]+'요일';
-}
-function renderTitle(){
-  const el=document.getElementById('titleDisplay');
-  if(el) el.textContent=state.appTitle;
-}
-function pad(n){return String(n).padStart(2,'0');}
-
-// ── RENDER ──
-function getTodayPts(){
-  return state.tasks.reduce((s,t)=>state.done[t.id]?s+t.points:s,0);
-}
-
-function updateHeader(){
-  const done=Object.values(state.done).filter(Boolean).length;
-  const total=state.tasks.length;
-  document.getElementById('powerFill').style.width=(total?done/total*100:0)+'%';
-  document.getElementById('powerCount').textContent=done+'/'+total;
-  const tp=state.totalPoints;
-  document.getElementById('totalPtsEl').textContent=tp;
-  const inC=tp%REWARD_GOAL;
-  document.getElementById('rewardLeftEl').textContent=REWARD_GOAL-inC;
-  document.getElementById('rewardFill').style.width=(inC/REWARD_GOAL*100)+'%';
-}
-
-function renderMissions(){
-  const doneTasks=state.tasks.filter(t=>state.done[t.id]);
-  const pending=state.tasks.filter(t=>!state.done[t.id]);
-
-  // done strip
-  const strip=document.getElementById('doneStrip');
-  strip.innerHTML=doneTasks.map(t=>`<span class="done-chip">${t.emoji} ${t.name}</span>`).join('');
-
-  // cards: show up to 3 pending, any order (they're all clickable)
-  const wrap=document.getElementById('cardsWrap');
-  wrap.innerHTML='';
-
-  const visible=pending.slice(0,3);
-  visible.forEach((task,idx)=>{
-    const card=document.createElement('div');
-    const isCurrent=idx===0;
-    card.className='task-card'+(isCurrent?' current':' upcoming');
-    card.id='task-'+task.id;
-    card.style.animationDelay=idx*0.06+'s';
-
-    let outfitHtml='';
-    if(task.hasOutfit && isCurrent){
-      outfitHtml=`<div class="outfit-sel">
-        <div class="outfit-lbl">▷ 오늘 복장 선택</div>
-        <div class="outfit-btns">
-          <button class="outfit-btn${state.outfitChoice==='uniform'?' selected':''}" onclick="selectOutfit('uniform',event)">🏫 교복</button>
-          <button class="outfit-btn${state.outfitChoice==='pe'?' selected':''}" onclick="selectOutfit('pe',event)">🩳 체육복</button>
-        </div></div>`;
-    }
-
-    card.innerHTML=`
-      <div class="emoji-box">${task.emoji}</div>
-      <div class="task-info">
-        <div class="task-num">MISSION ${pad(state.tasks.indexOf(task)+1)}</div>
-        <div class="task-name">${task.name}</div>
-        ${outfitHtml}
-        <div class="task-time"></div>
-      </div>
-      <div class="task-right">
-        <div class="task-pts">+${task.points}</div>
-        <div class="check-btn"></div>
-      </div>`;
-
-    // ANY pending card is clickable (free order)
-    card.addEventListener('click',e=>{
-      if(e.target.classList.contains('outfit-btn')) return;
-      if(task.hasOutfit && !state.outfitChoice && isCurrent){ shakeFeedback(card); return; }
-      checkTask(task);
-    });
-    wrap.appendChild(card);
-  });
-
-  // remaining hint
-  const rem=pending.length;
-  const hint=document.getElementById('remainHint');
-  hint.textContent=rem>3?`▼ 아래 미션 ${rem-3}개 더 있어`:' ';
-
-  // section label
-  document.getElementById('sectionLbl').textContent=
-    doneTasks.length===0?'⚔ 오늘의 미션':
-    pending.length===0?'✓ 모두 완료!':
-    `⚔ 미션 진행 중 (${doneTasks.length}/${state.tasks.length})`;
-
-  if(pending.length===0 && state.tasks.length>0) setTimeout(showComplete,800);
-}
-
-// ── SIDEBAR DRAG-TO-REORDER ──
-let _drag = null; // { taskId, ghost, startY, items }
-
-function renderSidebar(){
-  const list = document.getElementById('sidebarList');
-  const pending = state.tasks.filter(t=>!state.done[t.id]);
-  const firstPendingId = pending.length > 0 ? pending[0].id : null;
-  list.innerHTML = '';
-  state.tasks.forEach((task, idx) => {
-    const isDone = state.done[task.id];
-    const isActive = task.id === firstPendingId;
-    const item = document.createElement('div');
-    item.className = 'sb-item' + (isDone?' sb-done':'') + (isActive&&!isDone?' sb-active':'');
-    item.dataset.id = task.id;
-    item.title = task.name;
-    item.innerHTML = `<span>${task.emoji}</span><div class="sb-num">${String(idx+1).padStart(2,'0')}</div>`;
-
-    if(!isDone){
-      // tap = bring to front
-      let pressTimer = null;
-      let dragged = false;
-
-      const onStart = (e) => {
-        dragged = false;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        pressTimer = setTimeout(() => {
-          startDrag(task, item, clientX, clientY);
-        }, 180);
-      };
-      const onEnd = (e) => {
-        clearTimeout(pressTimer);
-        if(!dragged) scrollToOrCheck(task);
-      };
-
-      item.addEventListener('mousedown', onStart);
-      item.addEventListener('touchstart', onStart, {passive:true});
-      item.addEventListener('mouseup', onEnd);
-      item.addEventListener('touchend', onEnd);
-    }
-    list.appendChild(item);
-  });
-}
-
-function startDrag(task, el, startX, startY){
-  _drag = { taskId: task.id, startX, startY, currentIdx: state.tasks.indexOf(task) };
-
-  // ghost
-  const r = el.getBoundingClientRect();
-  const ghost = document.createElement('div');
-  ghost.className = 'sb-ghost';
-  ghost.innerHTML = `<span>${task.emoji}</span>`;
-  ghost.style.left = r.left + 'px';
-  ghost.style.top  = r.top  + 'px';
-  document.body.appendChild(ghost);
-  _drag.ghost = ghost;
-  _drag.el = el;
-  el.classList.add('sb-dragging');
-
-  const onMove = (e) => {
-    if(!_drag) return;
-    _drag.el._dragged = true;
-    const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    ghost.style.top  = (r.top  + cy - startY) + 'px';
-    ghost.style.left = (r.left + cx - startX) + 'px';
-
-    // find which sb-item we're hovering
-    const list = document.getElementById('sidebarList');
-    const items = [...list.querySelectorAll('.sb-item:not(.sb-done)')];
-    items.forEach(i => i.classList.remove('sb-over'));
-    const under = items.find(i => {
-      const ir = i.getBoundingClientRect();
-      return cy >= ir.top && cy <= ir.bottom && i !== el;
-    });
-    if(under){
-      under.classList.add('sb-over');
-      const toId = parseInt(under.dataset.id);
-      const toIdx = state.tasks.findIndex(t=>t.id===toId);
-      const fromIdx = state.tasks.findIndex(t=>t.id===_drag.taskId);
-      if(toIdx !== -1 && fromIdx !== -1 && toIdx !== fromIdx){
-        const arr = state.tasks;
-        const [moved] = arr.splice(fromIdx, 1);
-        arr.splice(toIdx, 0, moved);
-        renderSidebar();
-        renderMissions();
-        // re-grab el ref after re-render
-        const newEl = document.querySelector(`.sb-item[data-id="${_drag.taskId}"]`);
-        if(newEl){ newEl.classList.add('sb-dragging'); _drag.el = newEl; }
-      }
-    }
+  const $ = (id) => document.getElementById(id);
+  const state = {
+    started:false,
+    voice:true,
+    tasks:load('stable_tasks', DEFAULT),
+    done:load('stable_done', {}),
+    bricks:load('stable_bricks', 0),
+    photos:load('stable_photos', []),
+    page:0,
+    stream:null,
+    draft:null
   };
 
-  const onUp = () => {
-    if(!_drag) return;
-    document.querySelectorAll('.sb-over').forEach(i=>i.classList.remove('sb-over'));
-    document.querySelectorAll('.sb-dragging').forEach(i=>i.classList.remove('sb-dragging'));
-    _drag.ghost.remove();
-    _drag = null;
-    renderSidebar();
-    renderMissions();
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup',   onUp);
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend',  onUp);
-  };
-
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup',   onUp);
-  document.addEventListener('touchmove', onMove, {passive:true});
-  document.addEventListener('touchend',  onUp);
-}
-
-function scrollToOrCheck(task){
-  if(state.done[task.id]) return;
-  const pending = state.tasks.filter(t=>!state.done[t.id]);
-  const reordered = [task, ...pending.filter(t=>t.id!==task.id)];
-  const doneItems = state.tasks.filter(t=>state.done[t.id]);
-  state.tasks = [...doneItems, ...reordered];
-  renderMissions();
-  renderSidebar();
-}
-
-function render(){ updateHeader(); renderMissions(); renderSidebar(); renderTitle(); renderLegoMini(); }
-
-// ── CHECK TASK ──
-function checkTask(task){
-  const prev=state.totalPoints;
-  state.done[task.id]=true;
-  const t=krNow();
-  state.times[task.id]=pad(t.getHours())+':'+pad(t.getMinutes());
-  state.totalPoints+=task.points;
-  localStorage.setItem('ninjaPoints',state.totalPoints);
-
-  playMissionSound();
-  showPtsAnim(task);
-  showPraise(task);
-  // speak mission complete
-  setTimeout(()=>{ const en=TASK_EN[task.name]||task.name; speak(en+' — done! Nice work!', true); }, 300);
-
-  if(Math.floor(state.totalPoints/REWARD_GOAL)>Math.floor(prev/REWARD_GOAL))
-    setTimeout(showRewardAlert,1400);
-
-  render();
-}
-
-function showPtsAnim(task){
-  const card=document.getElementById('task-'+task.id);
-  if(!card)return;
-  const el=document.createElement('div');
-  el.className='pts-float';el.textContent='+'+task.points+'⚡';
-  card.appendChild(el);setTimeout(()=>el.remove(),1000);
-}
-
-// ── PRAISE ──
-function showPraise(task){
-  const p=PRAISES[Math.floor(Math.random()*PRAISES.length)];
-  const toast=document.getElementById('overlayBg'); // reuse overlay
-  showToast(p.e,p.t,(p.s||'+')+task.points+' pts!',1700);
-  spawnBurst();
-}
-function showRewardAlert(){
-  const times=Math.floor(state.totalPoints/REWARD_GOAL);
-  showToast('🎁','Reward unlocked!','Go show mom! 🥳',2500); setTimeout(()=>speak('Reward unlocked! Go tell mom!', true),200);
-  spawnConfetti();
-}
-function showToast(emoji,text,sub,dur){
-  const t=document.getElementById('overlayBg');
-  t.classList.add('show');
-  const toast=document.querySelector('.praise-toast');
-  document.querySelector('.praise-emoji').textContent=emoji;
-  document.querySelector('.praise-text').textContent=text;
-  document.querySelector('.praise-sub').textContent=sub;
-  toast.classList.add('show');
-  setTimeout(()=>{toast.classList.remove('show');t.classList.remove('show');},dur);
-}
-
-// ── OUTFIT ──
-function selectOutfit(choice,e){
-  e.stopPropagation();
-  state.outfitChoice=choice;
-  document.querySelectorAll('.outfit-btn').forEach(b=>b.classList.remove('selected'));
-  e.target.classList.add('selected');
-}
-
-// ── SHAKE ──
-function shakeFeedback(el){
-  el.style.animation='';void el.offsetWidth;el.style.animation='shake .4s ease';
-  if(!document.getElementById('shakeStyle')){
-    const s=document.createElement('style');s.id='shakeStyle';
-    s.textContent='@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}';
-    document.head.appendChild(s);
+  function load(key, fallback){
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
   }
-  setTimeout(()=>el.style.animation='',400);
-}
-
-// ── COMPLETE ──
-function showComplete(){
-  const now=krNow();
-  const h=pad(now.getHours()),m=pad(now.getMinutes());
-  const diff=(now.getHours()*60+now.getMinutes())-(7*60+35);
-  const pts=getTodayPts();
-  document.getElementById('cMsg').textContent=
-    diff<=0?`7:35 전 완료! S랭크! 총 ${pts}포인트 🥇`:
-    diff<=10?`아슬아슬 A랭크! 총 ${pts}포인트 💪`:
-    `다음엔 더 빨리! B랭크! 총 ${pts}포인트 💕`;
-  document.getElementById('cTime').textContent=`완료 시각  ${h}:${m}`;
-  renderLegoBig();
-  document.getElementById('completeScreen').classList.add('show');
-  spawnConfetti();
-  const figName = LEGO_FIGURES[state.figureIdx % LEGO_FIGURES.length].name;
-  setTimeout(()=>{ const n=state.userName?state.userName+', ':''; speak(n+'you finished all your missions today! Your '+figName+' figure is complete. Amazing job!', true); }, 600);
-}
-
-// ── CONFETTI / BURST ──
-function spawnConfetti(){
-  const layer=document.getElementById('confettiLayer');
-  const colors=['#00E5FF','#39FF14','#FFD600','#FF6B00','#FF2D2D','#fff'];
-  for(let i=0;i<60;i++){
-    const el=document.createElement('div');el.className='confetti-piece';
-    const s=5+Math.random()*7;
-    el.style.cssText=`left:${Math.random()*100}%;top:-15px;background:${colors[~~(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;border-radius:${Math.random()>.5?'50%':'2px'};width:${s}px;height:${s}px;`;
-    layer.appendChild(el);
+  function save(){
+    localStorage.setItem('stable_tasks', JSON.stringify(state.tasks));
+    localStorage.setItem('stable_done', JSON.stringify(state.done));
+    localStorage.setItem('stable_bricks', JSON.stringify(state.bricks));
+    localStorage.setItem('stable_photos', JSON.stringify(state.photos.slice(0,12)));
   }
-  setTimeout(()=>layer.innerHTML='',3500);
-}
-function spawnBurst(){
-  const layer=document.getElementById('burstLayer');
-  ['⚡','💥','✨','⭐','🔥'].forEach((em,i)=>{
-    const el=document.createElement('div');el.className='burst-p';
-    el.style.cssText=`left:${15+Math.random()*70}%;top:${20+Math.random()*60}%;animation-delay:${i*.07}s;`;
-    el.textContent=em;layer.appendChild(el);
-    setTimeout(()=>el.remove(),1300);
-  });
-}
-
-// ── RESET ──
-function resetAll(){
-  state.done={};state.times={};state.outfitChoice=null;
-  state.figureIdx = Math.floor(Math.random()*LEGO_FIGURES.length);
-  localStorage.setItem('ninjaFigIdx', state.figureIdx);
-  document.getElementById('completeScreen').classList.remove('show');
-  render();
-}
-
-// ── CAMERA ──
-let camStream=null;
-async function openCamera(){
-  const w=document.getElementById('camWrap');w.classList.add('show');
-  try{
-    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-    document.getElementById('camVideo').srcObject=camStream;
-  }catch(e){w.classList.remove('show');alert('카메라 권한을 허용해주세요!');}
-}
-function closeCamera(){
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
-  document.getElementById('camWrap').classList.remove('show');
-}
-function takePhoto(){
-  const v=document.getElementById('camVideo'),c=document.getElementById('photoCanvas');
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  const ctx=c.getContext('2d');ctx.save();ctx.scale(-1,1);ctx.drawImage(v,-c.width,0);ctx.restore();
-  document.getElementById('resultImg').src=c.toDataURL('image/jpeg',.9);
-  closeCamera();document.getElementById('photoResult').classList.add('show');spawnConfetti();
-}
-function savePhoto(){
-  const a=document.createElement('a');a.href=document.getElementById('resultImg').src;
-  const t=krNow();
-  a.download='닌자전사_'+t.getFullYear()+pad(t.getMonth()+1)+pad(t.getDate())+'.jpg';a.click();
-}
-function closePhoto(){document.getElementById('photoResult').classList.remove('show');}
-
-// ── EDIT PANEL ──
-// Uses a draft copy so nothing changes until ✓ 완료 is pressed
-let editDraft = [];
-
-function openEdit(){
-  // deep-copy current tasks into draft
-  editDraft = state.tasks.map(t=>({...t}));
-  renderEditPanel();
-  document.getElementById('editPanel').classList.add('show');
-}
-
-function closeEdit(save){
-  document.getElementById('editPanel').classList.remove('show');
-  document.getElementById('emojiPicker').classList.remove('show');
-  if(save){
-    // flush any focused input before saving
-    const focused = document.activeElement;
-    if(focused && focused.dataset.draftIdx !== undefined){
-      editDraft[parseInt(focused.dataset.draftIdx)].name = focused.value.trim() || editDraft[parseInt(focused.dataset.draftIdx)].name;
-    }
-    state.tasks = editDraft.map(t=>({...t}));
-    saveTasks();
-    Object.keys(state.done).forEach(id=>{
-      if(!state.tasks.find(t=>t.id===parseInt(id))) delete state.done[id];
-    });
-    render();
+  function updateClock(){
+    const now = new Date();
+    $('clockText').textContent = now.toLocaleString('ko-KR', { hour:'2-digit', minute:'2-digit', weekday:'short' });
   }
-}
+  updateClock(); setInterval(updateClock, 30000);
 
-function renderEditPanel(){
-  const body = document.getElementById('editBody');
-  // save cursor positions before clearing
-  body.innerHTML = '';
-  editDraft.forEach((task, idx) => {
-    const row = document.createElement('div');
-    row.className = 'edit-card'; row.dataset.idx = idx;
-    row.innerHTML = `
-      <div class="edit-drag">⠿</div>
-      <div class="emoji-pick" onclick="openEmojiPicker(${idx},this)">${task.emoji}</div>
-      <input value="${task.name}" maxlength="16" data-draft-idx="${idx}"
-        oninput="editDraft[${idx}].name=this.value"
-        placeholder="미션 이름">
-      <button class="edit-del" onclick="deleteDraftTask(${idx})">✕</button>`;
-    body.appendChild(row);
-  });
-  initDragSort();
-}
-
-function deleteDraftTask(idx){
-  editDraft.splice(idx, 1);
-  renderEditPanel();
-}
-
-function addMission(){
-  const inp = document.getElementById('newMissionInput');
-  const name = inp.value.trim();
-  if(!name) return;
-  editDraft.push({id:Date.now(), name, emoji:'⭐', points:5});
-  inp.value = '';
-  renderEditPanel();
-  // scroll to bottom so new item is visible
-  const body = document.getElementById('editBody');
-  body.scrollTop = body.scrollHeight;
-}
-
-// ── EMOJI PICKER ──
-let _epDraftIdx = null, _epActiveCat = 0;
-
-function openEmojiPicker(draftIdx, btn){
-  _epDraftIdx = draftIdx;
-  const picker = document.getElementById('emojiPicker');
-  renderEmojiPicker(_epActiveCat);
-  const r = btn.getBoundingClientRect();
-  // position: try below, fallback above if too low
-  const top = r.bottom + 6;
-  const maxTop = window.innerHeight - 220;
-  picker.style.top  = Math.min(top, maxTop) + 'px';
-  picker.style.left = Math.max(4, Math.min(r.left, window.innerWidth - 280)) + 'px';
-  picker.classList.add('show');
-  setTimeout(()=>document.addEventListener('click', closeEmojiOnOutside), 10);
-}
-
-function renderEmojiPicker(catIdx){
-  _epActiveCat = catIdx;
-  const picker = document.getElementById('emojiPicker');
-  const tabs = EMOJI_CATS.map((c,i)=>
-    `<div class="ep-tab${i===catIdx?' active':''}" onclick="renderEmojiPicker(${i});event.stopPropagation();">${c.label}</div>`
-  ).join('');
-  const grid = EMOJI_CATS[catIdx].items.map(e=>
-    `<div class="ep-item" onclick="pickEmoji('${e}')">${e}</div>`
-  ).join('');
-  picker.innerHTML = `<div class="ep-tabs">${tabs}</div><div class="ep-grid">${grid}</div>`;
-}
-
-function pickEmoji(em){
-  if(_epDraftIdx !== null) editDraft[_epDraftIdx].emoji = em;
-  document.getElementById('emojiPicker').classList.remove('show');
-  document.removeEventListener('click', closeEmojiOnOutside);
-  renderEditPanel();
-}
-function closeEmojiOnOutside(e){
-  const p = document.getElementById('emojiPicker');
-  if(!p.contains(e.target)){
-    p.classList.remove('show');
-    document.removeEventListener('click', closeEmojiOnOutside);
-  }
-}
-
-// ── DRAG SORT (edit panel) ──
-function initDragSort(){
-  const body = document.getElementById('editBody');
-  let dragEl = null, dragIdx = null, ghost = null;
-
-  body.querySelectorAll('.edit-drag').forEach(handle => {
-    handle.addEventListener('mousedown',  startDrag);
-    handle.addEventListener('touchstart', startDrag, {passive:true});
-  });
-
-  function startDrag(e){
-    const card = e.currentTarget.closest('.edit-card');
-    dragEl = card; dragIdx = parseInt(card.dataset.idx);
-    card.classList.add('edit-dragging');
-
-    // ghost
-    const r = card.getBoundingClientRect();
-    ghost = card.cloneNode(true);
-    ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;opacity:.85;pointer-events:none;z-index:3000;background:var(--panel2);border:1.5px solid var(--accent);border-radius:10px;`;
-    document.body.appendChild(ghost);
-    _startY = e.touches ? e.touches[0].clientY : e.clientY;
-    _startTop = r.top;
-
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup',   onUp);
-    document.addEventListener('touchmove', onMove, {passive:false});
-    document.addEventListener('touchend',  onUp);
-  }
-
-  let _startY, _startTop;
-
-  function onMove(e){
-    if(!dragEl) return;
-    e.preventDefault && e.preventDefault();
-    const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    if(ghost) ghost.style.top = (_startTop + cy - _startY) + 'px';
-
-    // find hovered card
-    const cards = [...body.querySelectorAll('.edit-card')];
-    cards.forEach(c=>c.classList.remove('edit-over'));
-    const under = cards.find(c => {
-      if(c === dragEl) return false;
-      const cr = c.getBoundingClientRect();
-      return cy >= cr.top && cy <= cr.bottom;
-    });
-    if(under){
-      under.classList.add('edit-over');
-      const toIdx = parseInt(under.dataset.idx);
-      if(toIdx !== dragIdx){
-        const [moved] = editDraft.splice(dragIdx, 1);
-        editDraft.splice(toIdx, 0, moved);
-        dragIdx = toIdx;
-        renderEditPanel();
-        dragEl = body.querySelectorAll('.edit-card')[dragIdx];
-        if(dragEl) dragEl.classList.add('edit-dragging');
-      }
-    }
-  }
-
-  function onUp(){
-    if(ghost){ ghost.remove(); ghost = null; }
-    body.querySelectorAll('.edit-dragging').forEach(c=>c.classList.remove('edit-dragging'));
-    body.querySelectorAll('.edit-over').forEach(c=>c.classList.remove('edit-over'));
-    dragEl = null; dragIdx = null;
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup',   onUp);
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend',  onUp);
-  }
-}
-
-// ── LEGO FIGURE RENDER ──
-function getLegoPartsCount(){
-  // map N completed missions → which parts to show (spread evenly across 3 parts)
-  const done = Object.values(state.done).filter(Boolean).length;
-  const total = Math.max(state.tasks.length, 1);
-  // head shows after 1/3, torso after 2/3, legs at full
-  const fig = LEGO_FIGURES[state.figureIdx % LEGO_FIGURES.length];
-  const numParts = fig.parts.length; // always 3
-  // how many parts unlocked
-  const frac = done / total;
-  if(frac === 0) return 0;
-  if(frac <= 1/3) return 1;
-  if(frac <= 2/3) return 2;
-  return 3;
-}
-
-function buildLegoSVG(scale, partsCount){
-  const fig = LEGO_FIGURES[state.figureIdx % LEGO_FIGURES.length];
-  let svg = '';
-  for(let i = 0; i < partsCount && i < fig.parts.length; i++){
-    svg += fig.parts[i];
-  }
-  // ghost outlines for locked parts
-  for(let i = partsCount; i < fig.parts.length; i++){
-    svg += `<g opacity="0.12">${fig.parts[i]}</g>`;
-  }
-  return svg;
-}
-
-function renderLegoMini(){
-  const svgEl = document.getElementById('legoMiniSvg');
-  const progEl = document.getElementById('legoProgress');
-  const nameEl = document.getElementById('legoName');
-  if(!svgEl) return;
-  const done = Object.values(state.done).filter(Boolean).length;
-  const total = state.tasks.length;
-  const parts = getLegoPartsCount();
-  svgEl.innerHTML = buildLegoSVG(1, parts);
-  progEl.textContent = done+'/'+total;
-  const fig = LEGO_FIGURES[state.figureIdx % LEGO_FIGURES.length];
-  nameEl.textContent = fig.name.toUpperCase();
-}
-
-function renderLegoBig(){
-  const svgEl = document.getElementById('legoBigSvg');
-  const nameEl = document.getElementById('legoCompleteName');
-  if(!svgEl) return;
-  const fig = LEGO_FIGURES[state.figureIdx % LEGO_FIGURES.length];
-  svgEl.innerHTML = buildLegoSVG(1, 3); // all parts
-  nameEl.textContent = fig.name;
-}
-
-// ── TITLE EDIT ──
-function startTitleEdit(){
-  const display = document.getElementById('titleDisplay');
-  const inp = document.createElement('input');
-  inp.className = 'title-input';
-  inp.value = state.appTitle;
-  inp.maxLength = 20;
-  display.replaceWith(inp);
-  inp.focus(); inp.select();
-  const finish = () => {
-    const val = inp.value.trim() || state.appTitle;
-    state.appTitle = val;
-    saveTitle(val);
-    const div = document.createElement('div');
-    div.className = 'title'; div.id = 'titleDisplay';
-    div.textContent = val;
-    div.onclick = startTitleEdit;
-    inp.replaceWith(div);
-  };
-  inp.addEventListener('blur', finish);
-  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') inp.blur(); });
-}
-
-// ── VOICE ──
-let _voiceReady = false;
-function pickVoice(lang){
-  const voices = window.speechSynthesis.getVoices();
-  // prefer network/enhanced voices for naturalness
-  const pref = voices.filter(v=>v.lang.startsWith(lang) && (v.localService===false||v.name.includes('Enhanced')||v.name.includes('Premium')||v.name.includes('Natural')));
-  if(pref.length) return pref[0];
-  const any = voices.filter(v=>v.lang.startsWith(lang));
-  return any[0] || null;
-}
-
-function speak(text, isEnglish=true){
-  if(!state.voiceEnabled) return;
-  if(!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  if(isEnglish){
+  function speak(text){
+    if(!state.voice || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
     u.lang = 'en-US';
-    u.rate = 0.92;   // slightly slower = more natural
-    u.pitch = 1.05;  // slightly above neutral = warm
-    u.volume = 1;
-    const v = pickVoice('en');
-    if(v) u.voice = v;
-  } else {
-    u.lang = 'ko-KR';
-    u.rate = 0.90;
-    u.pitch = 1.0;
-    u.volume = 1;
-    const v = pickVoice('ko');
-    if(v) u.voice = v;
+    u.rate = 0.92;
+    u.pitch = 1.02;
+    const voices = speechSynthesis.getVoices();
+    const preferred = voices.find(v => /^en/i.test(v.lang) && /Natural|Enhanced|Online|Siri/i.test(v.name)) || voices.find(v => /^en/i.test(v.lang));
+    if(preferred) u.voice = preferred;
+    speechSynthesis.speak(u);
   }
-  window.speechSynthesis.speak(u);
-}
+  if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
 
-function playMissionSound(){
-  // short beep via Web Audio API regardless of voice setting
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const t = ctx.currentTime;
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc1.type = 'sine'; osc1.frequency.setValueAtTime(880, t); osc1.frequency.exponentialRampToValueAtTime(1200, t+0.08);
-    osc2.type = 'sine'; osc2.frequency.setValueAtTime(1200, t+0.1); osc2.frequency.exponentialRampToValueAtTime(1600, t+0.2);
-    gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.001, t+0.35);
-    osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
-    osc1.start(t); osc1.stop(t+0.1);
-    osc2.start(t+0.1); osc2.stop(t+0.35);
-  }catch(e){}
-}
+  function getCompleted(){ return state.tasks.filter(t => state.done[t.id]).length; }
+  function getTotal(){ return state.tasks.length; }
+  function visibleTasks(){
+    const undone = state.tasks.filter(t => !state.done[t.id]);
+    const groups = [];
+    for(let i=0;i<undone.length;i+=3) groups.push(undone.slice(i,i+3));
+    return groups[state.page] || [];
+  }
+  function syncPage(){
+    const undone = state.tasks.filter(t => !state.done[t.id]);
+    const groups = Math.max(1, Math.ceil(undone.length / 3));
+    if(state.page >= groups) state.page = groups - 1;
+  }
 
-function playIntroSound(){
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const t = ctx.currentTime;
-    [[440,.05],[554,.1],[659,.15],[880,.22]].forEach(([freq,delay])=>{
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      osc.type = 'sine'; osc.frequency.value = freq;
-      g.gain.setValueAtTime(0.18, t+delay);
-      g.gain.exponentialRampToValueAtTime(0.001, t+delay+0.25);
-      osc.connect(g); g.connect(ctx.destination);
-      osc.start(t+delay); osc.stop(t+delay+0.3);
+  function renderFigure(){
+    const done = getCompleted();
+    const total = Math.max(1, getTotal());
+    const ratio = done / total;
+    $('part-head').classList.toggle('show', ratio > 0);
+    $('part-body').classList.toggle('show', ratio >= 0.34);
+    $('part-legs').classList.toggle('show', ratio >= 0.67 || done === total);
+    $('brickCount').textContent = `획득 블럭 ${state.bricks}개`;
+  }
+
+  function renderMissions(){
+    syncPage();
+    const list = $('missionList');
+    list.innerHTML = '';
+    const items = visibleTasks();
+    items.forEach(task => {
+      const done = !!state.done[task.id];
+      const div = document.createElement('button');
+      div.type = 'button';
+      div.className = 'mission' + (done ? ' done' : '');
+      div.innerHTML = `<div class="emoji">${task.emoji}</div><div class="mMain"><div class="mName">${task.name}</div><div class="mMeta">터치해서 완료</div></div><div class="chk">✓</div>`;
+      div.addEventListener('click', () => toggleMission(task.id));
+      list.appendChild(div);
     });
-  }catch(e){}
-}
-
-// ── INTRO / START ──
-let _appStarted = false;
-
-function startApp(evt){
-  if(evt){
-    evt.preventDefault && evt.preventDefault();
-    evt.stopPropagation && evt.stopPropagation();
+    const undoneCount = state.tasks.filter(t => !state.done[t.id]).length;
+    $('pageHint').textContent = undoneCount > 3 ? '현재 3개씩 보여주고 있어. 완료하면 다음 미션이 자동으로 보여.' : (undoneCount === 0 ? '모든 미션 완료!' : '');
+    const done = getCompleted(), total = getTotal();
+    $('bar').style.width = `${total ? (done/total)*100 : 0}%`;
+    $('progressText').textContent = `${done} / ${total} 완료`;
+    renderFigure();
+    if(done === total && total > 0) {
+      speak('All missions complete. Time for your photo.');
+    }
   }
-  if(_appStarted) return false;
-  _appStarted = true;
 
-  const intro = document.getElementById('introScreen');
-  if(!intro) return false;
+  function renderGallery(){
+    $('gallery').innerHTML = state.photos.slice(0,12).map(src => `<img src="${src}" alt="인증샷">`).join('');
+  }
 
-  intro.style.pointerEvents = 'none';
-  intro.classList.add('fade-out');
-  playIntroSound();
+  function brickAnim(){
+    const colors = ['#f59e0b','#ef4444','#22c55e','#38bdf8','#a855f7'];
+    const block = document.createElement('div');
+    block.className = 'floatBrick';
+    block.style.background = colors[Math.floor(Math.random()*colors.length)];
+    block.textContent = '🧱 +1';
+    $('floatZone').appendChild(block);
+    setTimeout(() => block.remove(), 820);
+  }
 
-  setTimeout(()=>{
-    intro.style.display='none';
-    showJarvisGreeting();
-  }, 600);
-  return false;
-}
+  function toggleMission(id){
+    if(state.done[id]) return;
+    state.done[id] = true;
+    state.bricks += 1;
+    brickAnim();
+    save();
+    const undone = state.tasks.filter(t => !state.done[t.id]).length;
+    if(undone % 3 === 0 && undone > 0) state.page += 1;
+    renderMissions();
+  }
 
-function setupIntroStart(){
-  const intro = document.getElementById('introScreen');
-  const btn = document.getElementById('introStartBtn');
-  if(!intro) return;
+  function openSheet(which){
+    $('backdrop').classList.add('show');
+    $(which).classList.add('show');
+  }
+  function closeSheets(){
+    $('backdrop').classList.remove('show');
+    $('editSheet').classList.remove('show');
+    $('cameraSheet').classList.remove('show');
+    stopCamera();
+  }
 
-  const handler = (e) => startApp(e);
-  ['click','pointerup','touchend'].forEach(name => {
-    intro.addEventListener(name, handler, {passive:false});
-    if(btn) btn.addEventListener(name, handler, {passive:false});
+  function renderEdit(){
+    state.draft = state.tasks.map(t => ({...t}));
+    const wrap = $('editList');
+    wrap.innerHTML = '';
+    state.draft.forEach((task, idx) => {
+      const row = document.createElement('div');
+      row.className = 'sheetRow';
+      row.innerHTML = `<input value="${escapeHtml(task.emoji)}" maxlength="4" style="max-width:72px"><input value="${escapeHtml(task.name)}" maxlength="20"><button class="iconbtn" type="button">삭제</button>`;
+      const [emojiInput, nameInput, delBtn] = row.querySelectorAll('input,button');
+      emojiInput.addEventListener('input', e => state.draft[idx].emoji = e.target.value || '⭐');
+      nameInput.addEventListener('input', e => state.draft[idx].name = e.target.value || '새 미션');
+      delBtn.addEventListener('click', () => { state.draft.splice(idx,1); renderEdit(); });
+      wrap.appendChild(row);
+    });
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+  async function openCamera(){
+    openSheet('cameraSheet');
+    $('cameraWrap').classList.remove('show');
+    try {
+      if(!navigator.mediaDevices?.getUserMedia) throw new Error('not supported');
+      state.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio:false });
+      $('video').srcObject = state.stream;
+      $('cameraWrap').classList.add('show');
+    } catch (e) {
+      // fallback remains available via file input
+    }
+  }
+  function stopCamera(){
+    if(state.stream){ state.stream.getTracks().forEach(t => t.stop()); state.stream = null; }
+    $('video').srcObject = null;
+  }
+  function storePhoto(src){
+    state.photos.unshift(src);
+    state.photos = state.photos.slice(0,12);
+    save();
+    renderGallery();
+  }
+  function takePhoto(){
+    const v = $('video');
+    if(!v.videoWidth) return;
+    const c = $('canvas');
+    c.width = v.videoWidth; c.height = v.videoHeight;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(v, 0, 0);
+    storePhoto(c.toDataURL('image/jpeg', 0.92));
+    closeSheets();
+  }
+
+  function startApp(){
+    if(state.started) return;
+    state.started = true;
+    $('startOverlay').style.display = 'none';
+    speak('Good morning. Let us start your mission.');
+  }
+
+  $('startBtn').addEventListener('click', startApp, {passive:true});
+  $('startBtn').addEventListener('touchend', (e) => { e.preventDefault(); startApp(); }, {passive:false});
+  $('editOpenBtn').addEventListener('click', () => { renderEdit(); openSheet('editSheet'); });
+  $('closeEditBtn').addEventListener('click', closeSheets);
+  $('saveEditBtn').addEventListener('click', () => {
+    state.tasks = state.draft.filter(t => t.name && t.name.trim()).map((t,i) => ({ id: Date.now() + i, name: t.name.trim(), emoji: (t.emoji || '⭐').trim() || '⭐' }));
+    state.done = {};
+    state.page = 0;
+    save();
+    closeSheets();
+    renderMissions();
   });
-  intro.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' || e.key === ' ') startApp(e);
+  $('addMissionBtn').addEventListener('click', () => { if(!state.draft) state.draft=[]; state.draft.push({id:Date.now(), name:'새 미션', emoji:'⭐'}); renderEdit(); });
+  $('cameraBtn').addEventListener('click', openCamera);
+  $('closeCameraBtn').addEventListener('click', closeSheets);
+  $('snapBtn').addEventListener('click', takePhoto);
+  $('backdrop').addEventListener('click', closeSheets);
+  $('voiceBtn').addEventListener('click', () => { state.voice = !state.voice; $('voiceBtn').textContent = state.voice ? '🔊 음성' : '🔇 음성'; });
+  $('filePick').addEventListener('change', (e) => {
+    const file = e.target.files?.[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { storePhoto(reader.result); closeSheets(); };
+    reader.readAsDataURL(file);
   });
-}
 
-function showJarvisGreeting(){
-  const overlay = document.getElementById('jarvisOverlay');
-  const scan    = document.getElementById('jarvisScan');
-  const l1 = document.getElementById('jLine1');
-  const l2 = document.getElementById('jLine2');
-  const l3 = document.getElementById('jLine3');
-
-  const name = state.userName ? state.userName + '님' : '';
-  l1.textContent = name ? 'Hello, ' + name + '!' : 'Hello, Agent!';
-  l2.textContent = 'Welcome to';
-  l3.textContent = 'Morning Mission System';
-
-  overlay.classList.add('show');
-
-  setTimeout(()=>{ scan.classList.add('show'); }, 200);
-  setTimeout(()=>{ l1.classList.add('show'); }, 500);
-  setTimeout(()=>{ l2.classList.add('show'); }, 900);
-  setTimeout(()=>{ l3.classList.add('show'); }, 1300);
-
-  // speak
-  const greeting = name
-    ? 'Hey ' + name + '! Good morning. Welcome to your Morning Mission. Let's get started!'
-    : 'Good morning! Welcome to your Morning Mission. Let's get started!';
-  setTimeout(()=>speak(greeting, true), 400);
-
-  setTimeout(()=>{
-    overlay.classList.remove('show');
-    setTimeout(()=>{
-      l1.classList.remove('show'); l2.classList.remove('show');
-      l3.classList.remove('show'); scan.classList.remove('show');
-    }, 400);
-  }, 3800);
-}
-
-// ── SETTINGS ──
-function openSettings(){
-  document.getElementById('nameInput').value = state.userName;
-  const von  = document.getElementById('voiceOnBtn');
-  const voff = document.getElementById('voiceOffBtn');
-  if(state.voiceEnabled){ von.classList.add('selected'); voff.classList.remove('selected'); }
-  else{ voff.classList.add('selected'); von.classList.remove('selected'); }
-  document.getElementById('settingsPanel').classList.add('show');
-}
-function closeSettings(){
-  const name = document.getElementById('nameInput').value.trim();
-  state.userName = name; saveName(name);
-  document.getElementById('settingsPanel').classList.remove('show');
-}
-function setVoice(on){
-  state.voiceEnabled = on; saveVoice(on);
-  document.getElementById('voiceOnBtn').classList.toggle('selected', on);
-  document.getElementById('voiceOffBtn').classList.toggle('selected', !on);
-}
-
-// ── INIT ──
-if(!localStorage.getItem('ninjaFigIdx')){ localStorage.setItem('ninjaFigIdx',state.figureIdx); }
-updateClock(); setInterval(updateClock,10000);
-render(); renderTitle();
-setupIntroStart();
-
-// update intro title text
-const introTitleEl = document.getElementById('introTitle');
-if(introTitleEl) introTitleEl.innerHTML = state.appTitle.replace(' ','<span> ')+'</span>';
-
-// preload voices
-if(window.speechSynthesis){
-  window.speechSynthesis.getVoices();
-  window.speechSynthesis.onvoiceschanged = ()=>{ window.speechSynthesis.getVoices(); _voiceReady=true; };
-}
+  renderMissions();
+  renderGallery();
+})();
 </script>
-
-<!-- PRAISE TOAST (needs to be after overlay-bg in DOM for z-index) -->
-<div class="praise-toast">
-  <span class="praise-emoji">🤖</span>
-  <div class="praise-text">닌자 파워!</div>
-  <div class="praise-sub">+5 전투력!</div>
-</div>
-
 </body>
 </html>
